@@ -1,0 +1,1768 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RITUAL - Games & Challenges</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('images/RITUAL LOGO.jpeg');
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            zoom: 0.8;
+        }
+
+        .container {
+            max-width: 1000px;
+            width: 100%;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: #fff;
+        }
+
+        .header h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .section-selector {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .section-btn {
+            padding: 15px 30px;
+            font-size: 1.1em;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            transition: transform 0.3s, box-shadow 0.3s;
+            font-weight: bold;
+        }
+
+        .section-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .section-btn.active {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .content {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            display: none;
+        }
+
+        .content.active {
+            display: block;
+            animation: slideIn 0.4s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .timer-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #eee;
+        }
+
+        .timer {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .timer.warning {
+            color: #ff9800;
+        }
+
+        .timer.danger {
+            color: #f44336;
+        }
+
+        /* Puzzle Section Styles */
+        .puzzle-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 10px;
+            margin: 30px 0;
+        }
+
+        /* Geography Quiz Styles */
+        .geography-progress {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f0f0f0;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .geography-question-card {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            margin: 30px 0;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .geo-location-info {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .geo-location-info h3 {
+            font-size: 1.5em;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .location-image-placeholder {
+            width: 100%;
+            height: 250px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .geo-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 30px 0;
+        }
+
+        .geo-option-btn {
+            padding: 20px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: left;
+            font-size: 1.1em;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .geo-option-btn:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+
+        .geo-option-btn .option-label {
+            background: #667eea;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .geo-option-btn .option-text {
+            flex: 1;
+        }
+
+        .geo-option-btn.correct {
+            border-color: #4caf50;
+            background: #e8f5e9;
+        }
+
+        .geo-option-btn.correct .option-label {
+            background: #4caf50;
+        }
+
+        .geo-option-btn.wrong {
+            border-color: #f44336;
+            background: #ffebee;
+        }
+
+        .geo-option-btn.wrong .option-label {
+            background: #f44336;
+        }
+
+        .geo-option-btn:disabled {
+            cursor: default;
+        }
+
+        .geo-navigation {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .puzzle-piece {
+            aspect-ratio: 1;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            transition: transform 0.2s, box-shadow 0.2s;
+            user-select: none;
+        }
+
+        .puzzle-piece:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .puzzle-piece.selected {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            box-shadow: 0 0 15px rgba(245, 87, 108, 0.6);
+        }
+
+        .puzzle-piece.completed {
+            background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+            cursor: default;
+        }
+
+        .puzzle-progress {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f0f0f0;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #ddd;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        /* Quiz Section Styles */
+        .quiz-setup {
+            background: #f9f9f9;
+            padding: 25px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-family: 'Arial', sans-serif;
+            font-size: 1em;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .question-entry {
+            background: white;
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+        }
+
+        .question-entry h4 {
+            margin-bottom: 10px;
+            color: #667eea;
+        }
+
+        .option-input {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 8px;
+            align-items: center;
+        }
+
+        .option-input input {
+            flex: 1;
+        }
+
+        .option-input label {
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: transform 0.2s, box-shadow 0.2s;
+            font-size: 1em;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-danger {
+            background: #f44336;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #da190b;
+        }
+
+        .btn-success {
+            background: #4caf50;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #45a049;
+        }
+
+        .btn-secondary {
+            background: #999;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #777;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .quiz-display {
+            display: none;
+        }
+
+        .quiz-display.active {
+            display: block;
+        }
+
+        .question-card {
+            background: #f9f9f9;
+            padding: 25px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .question-card h3 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option {
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: white;
+        }
+
+        .option:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+
+        .option.selected {
+            border-color: #667eea;
+            background: #e8eef7;
+            font-weight: bold;
+        }
+
+        .option input[type="radio"] {
+            margin-right: 10px;
+        }
+
+        .quiz-score {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .quiz-score h3 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .quiz-score p {
+            font-size: 1.2em;
+            margin-bottom: 20px;
+        }
+
+        .submission-area {
+            text-align: center;
+            padding: 30px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            margin-top: 30px;
+        }
+
+        .submission-area.active {
+            background: #f0f8ff;
+            border: 2px solid #667eea;
+        }
+
+        .submission-status {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin: 15px 0;
+        }
+
+        .submission-status.success {
+            color: #4caf50;
+        }
+
+        .submission-status.waiting {
+            color: #999;
+        }
+
+        .submission-status.completed {
+            color: #667eea;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .section-selector {
+                gap: 10px;
+            }
+
+            .section-btn {
+                padding: 12px 20px;
+                font-size: 1em;
+            }
+
+            .puzzle-grid {
+                grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+                gap: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>RITUAL</h1>
+            <p>Games & Challenges</p>
+        </div>
+
+        <div class="section-selector">
+            <button class="section-btn active" onclick="switchSection('puzzle')">Geography Quizzes</button>
+            <button class="section-btn" onclick="switchSection('quiz')">Quiz Time</button>
+            <button class="section-btn" onclick="switchSection('logo')">Logo Quizzes</button>
+        </div>
+
+        <!-- Geography Quizzes Section -->
+        <div id="puzzle" class="content active">
+            <div class="timer-section">
+                <h2>Geography Quizzes</h2>
+                <div class="timer" id="puzzleTimer">10:00</div>
+            </div>
+
+            <div id="geographyQuiz">
+                <div id="geoStartScreen" style="text-align: center; padding: 60px 20px;">
+                    <h2 style="font-size: 2.5em; margin-bottom: 20px; color: #333;">Geography Quizzes</h2>
+                    <p style="font-size: 1.2em; color: #666; margin-bottom: 30px;">Challenge yourself with 40 geography questions</p>
+                    <div style="background: #f0f4ff; padding: 30px; border-radius: 8px; margin: 30px 0; max-width: 500px; margin-left: auto; margin-right: auto;">
+                        <p style="font-size: 1.1em; margin: 10px 0;"><strong>📝 40 Questions</strong></p>
+                        <p style="font-size: 1.1em; margin: 10px 0;"><strong>⏱️ 20 Seconds per Question</strong></p>
+                        <p style="font-size: 1.1em; margin: 10px 0;"><strong>🌍 Various Difficulty Levels</strong></p>
+                    </div>
+                    <button class="btn btn-primary" onclick="startGeographyQuiz()" style="font-size: 1.1em; padding: 15px 40px; margin-top: 30px;">Start Geography Quiz</button>
+                </div>
+
+                <div id="geoQuizContent" style="display: none;">
+                    <div class="geography-progress">
+                        <p id="geoStatus">Answer geography questions</p>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="geoProgress"></div>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+                            <p id="geoCount">Question 1 of 40</p>
+                            <div id="questionTimer" style="font-size: 1.5em; font-weight: bold; color: #667eea; min-width: 50px; text-align: right;">20s</div>
+                        </div>
+                    </div>
+
+                    <div class="geography-question-card">
+                        <div class="geo-location-info">
+                            <h3 id="geoQuestion">What is this famous landmark?</h3>
+                            <div id="geoLocationImage" class="location-image-placeholder">
+                                📍 Geographic Location
+                            </div>
+                        </div>
+
+                        <div class="geo-options">
+                            <button class="geo-option-btn" onclick="selectGeoAnswer(0, 'A')">
+                                <span class="option-label">A</span>
+                                <span class="option-text" id="optionA">Option A</span>
+                            </button>
+                            <button class="geo-option-btn" onclick="selectGeoAnswer(1, 'B')">
+                                <span class="option-label">B</span>
+                                <span class="option-text" id="optionB">Option B</span>
+                            </button>
+                            <button class="geo-option-btn" onclick="selectGeoAnswer(2, 'C')">
+                                <span class="option-label">C</span>
+                                <span class="option-text" id="optionC">Option C</span>
+                            </button>
+                            <button class="geo-option-btn" onclick="selectGeoAnswer(3, 'D')">
+                                <span class="option-label">D</span>
+                                <span class="option-text" id="optionD">Option D</span>
+                            </button>
+                        </div>
+
+                        <div class="geo-navigation">
+                            <button class="btn btn-secondary" id="prevGeoBtn" onclick="previousGeoQuestion()" disabled>Previous</button>
+                            <button class="btn btn-primary" id="nextGeoBtn" onclick="nextGeoQuestion()">Next</button>
+                            <button class="btn btn-success" id="submitGeoBtn" onclick="submitGeography()" style="display: none;">Submit Quiz</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="submission-area" id="puzzleSubmission">
+                <p class="submission-status waiting" id="puzzleSubmissionStatus">Complete all questions to submit</p>
+                <button class="btn btn-primary" id="puzzleSubmitBtn" onclick="submitPuzzle()" disabled>Submit Geography Quiz</button>
+            </div>
+        </div>
+
+        <!-- Quiz Section -->
+        <div id="quiz" class="content">
+            <div class="timer-section">
+                <h2>Quiz Time</h2>
+                <div class="timer" id="quizTimer">10:00</div>
+            </div>
+
+            <!-- Quiz Start Screen -->
+            <div id="quizStartScreen" style="text-align: center; padding: 60px 20px;">
+                <h2 style="font-size: 2.5em; margin-bottom: 20px; color: #333;">Quiz Time</h2>
+                <p style="font-size: 1.2em; color: #666; margin-bottom: 30px;">Create and take your own custom quiz</p>
+                <div style="background: #f0f4ff; padding: 30px; border-radius: 8px; margin: 30px 0; max-width: 500px; margin-left: auto; margin-right: auto;">
+                    <p style="font-size: 1.1em; margin: 10px 0;"><strong>✏️ Create Questions</strong></p>
+                    <p style="font-size: 1.1em; margin: 10px 0;"><strong>🎯 Multiple Choice Options</strong></p>
+                    <p style="font-size: 1.1em; margin: 10px 0;"><strong>⏱️ 10 Minute Timer</strong></p>
+                </div>
+                <button class="btn btn-primary" onclick="showQuizSetup()" style="font-size: 1.1em; padding: 15px 40px; margin-top: 30px;">Start Quiz Time</button>
+            </div>
+
+            <!-- Quiz Setup Area -->
+            <div id="quizSetup" style="display: none;">
+                <div class="quiz-setup">
+                    <h3>Create Your Quiz</h3>
+                    <div class="btn-group">
+                        <button class="btn btn-primary" onclick="addQuestionInput()">+ Add Question</button>
+                        <button class="btn btn-success" id="startQuizBtn" onclick="startQuiz()" disabled>Start Quiz</button>
+                        <button class="btn btn-secondary" onclick="resetQuiz()">Reset All</button>
+                    </div>
+
+                    <div id="questionsContainer"></div>
+                </div>
+
+                <div class="submission-area">
+                    <p class="submission-status waiting" id="quizSetupStatus">Add at least one question to start</p>
+                </div>
+            </div>
+
+            <!-- Quiz Display Area -->
+            <div id="quizDisplay" class="quiz-display">
+                <div id="questionsDisplay"></div>
+                <div class="btn-group" style="justify-content: center;">
+                    <button class="btn btn-primary" onclick="finishQuiz()">Finish Quiz</button>
+                    <button class="btn btn-secondary" onclick="resetQuizDisplay()">Back to Setup</button>
+                </div>
+
+                <div id="quizScoreDisplay" style="display: none;">
+                    <div class="quiz-score">
+                        <h3>Quiz Completed!</h3>
+                        <p id="scoreText">Your Score: 0/0</p>
+                        <div class="submission-area active">
+                            <p class="submission-status completed">Results saved and ready to submit</p>
+                            <button class="btn btn-primary" onclick="submitQuiz()">Submit Quiz Results</button>
+                            <button class="btn btn-secondary" onclick="resetQuizDisplay()" style="margin-top: 10px;">Take Another Quiz</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Logo Quizzes Section -->
+        <div id="logo" class="content">
+            <div class="timer-section">
+                <h2>Logo Quizzes</h2>
+                <div class="timer" id="logoTimer">10:00</div>
+            </div>
+
+            <!-- Logo Quiz Start Screen -->
+            <div id="logoStartScreen" style="text-align: center; padding: 60px 20px;">
+                <h2 style="font-size: 2.5em; margin-bottom: 20px; color: #333;">Logo Quizzes</h2>
+                <p style="font-size: 1.2em; color: #666; margin-bottom: 30px;">Create and take your own logo identification quiz</p>
+                <div style="background: #f0f4ff; padding: 30px; border-radius: 8px; margin: 30px 0; max-width: 500px; margin-left: auto; margin-right: auto;">
+                    <p style="font-size: 1.1em; margin: 10px 0;"><strong>🏢 Logo Questions</strong></p>
+                    <p style="font-size: 1.1em; margin: 10px 0;"><strong>🎯 Multiple Choice Options</strong></p>
+                    <p style="font-size: 1.1em; margin: 10px 0;"><strong>⏱️ 10 Minute Timer</strong></p>
+                </div>
+                <button class="btn btn-primary" onclick="showLogoSetup()" style="font-size: 1.1em; padding: 15px 40px; margin-top: 30px;">Start Logo Quizzes</button>
+            </div>
+
+            <!-- Logo Quiz Setup Area -->
+            <div id="logoSetup" style="display: none;">
+                <div class="quiz-setup">
+                    <h3>Create Your Logo Quiz</h3>
+                    <div class="btn-group">
+                        <button class="btn btn-primary" onclick="addLogoQuestionInput()">+ Add Logo Question</button>
+                        <button class="btn btn-success" id="startLogoQuizBtn" onclick="startLogoQuiz()" disabled>Start Logo Quiz</button>
+                        <button class="btn btn-secondary" onclick="resetLogoQuiz()">Reset All</button>
+                    </div>
+
+                    <div id="logoQuestionsContainer"></div>
+                </div>
+
+                <div class="submission-area">
+                    <p class="submission-status waiting" id="logoSetupStatus">Add at least one question to start</p>
+                </div>
+            </div>
+
+            <!-- Logo Quiz Display Area -->
+            <div id="logoDisplay" class="quiz-display">
+                <div id="logoQuestionsDisplay"></div>
+                <div class="btn-group" style="justify-content: center;">
+                    <button class="btn btn-primary" onclick="finishLogoQuiz()">Finish Quiz</button>
+                    <button class="btn btn-secondary" onclick="resetLogoQuizDisplay()">Back to Setup</button>
+                </div>
+
+                <div id="logoScoreDisplay" style="display: none;">
+                    <div class="quiz-score">
+                        <h3>Logo Quiz Completed!</h3>
+                        <p id="logoScoreText">Your Score: 0/0</p>
+                        <div class="submission-area active">
+                            <p class="submission-status completed">Results saved and ready to submit</p>
+                            <button class="btn btn-primary" onclick="submitLogoQuiz()">Submit Logo Quiz Results</button>
+                            <button class="btn btn-secondary" onclick="resetLogoQuizDisplay()" style="margin-top: 10px;">Take Another Quiz</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global state
+        let gameState = {
+            currentSection: 'puzzle',
+            puzzleData: [],
+            quizData: [],
+            logoQuizData: [],
+            puzzleAnswers: [],
+            quizAnswers: [],
+            logoQuizAnswers: [],
+            puzzleTime: 600,
+            quizTime: 600,
+            logoTime: 600,
+            puzzleTimerInterval: null,
+            quizTimerInterval: null,
+            logoTimerInterval: null,
+            quizStarted: false,
+            logoStarted: false,
+            puzzleCompleted: false,
+            quizCompleted: false,
+            logoCompleted: false
+        };
+
+        // Switch between sections
+        function switchSection(section) {
+            gameState.currentSection = section;
+            
+            // Update buttons
+            document.querySelectorAll('.section-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Update content
+            document.querySelectorAll('.content').forEach(content => content.classList.remove('active'));
+            document.getElementById(section).classList.add('active');
+            
+            // Reset and start timer
+            if (section === 'puzzle') {
+                if (gameState.puzzleTimerInterval) clearInterval(gameState.puzzleTimerInterval);
+                startPuzzleTimer();
+            } else if (section === 'quiz') {
+                if (gameState.quizTimerInterval) clearInterval(gameState.quizTimerInterval);
+                startQuizTimer();
+            } else if (section === 'logo') {
+                if (gameState.logoTimerInterval) clearInterval(gameState.logoTimerInterval);
+                startLogoTimer();
+            }
+        }
+
+        // ==================== GEOGRAPHY QUIZ LOGIC ====================
+        const geographyQuestions = [
+            // Easy questions
+            {
+                question: "What is the capital of Australia?",
+                options: ["Sydney", "Melbourne", "Canberra", "Brisbane"],
+                correct: 2
+            },
+            {
+                question: "Which mountain is the highest in the world?",
+                options: ["K2", "Kangchenjunga", "Mount Everest", "Makalu"],
+                correct: 2
+            },
+            {
+                question: "What is the longest river in the world?",
+                options: ["Amazon", "Nile", "Yangtze", "Mississippi"],
+                correct: 1
+            },
+            {
+                question: "Which desert is the largest in the world?",
+                options: ["Sahara", "Arabian", "Gobi", "Antarctic"],
+                correct: 3
+            },
+            {
+                question: "What is the capital of Japan?",
+                options: ["Osaka", "Tokyo", "Kyoto", "Hiroshima"],
+                correct: 1
+            },
+            // Hard questions
+            {
+                question: "Which country has the most time zones?",
+                options: ["Russia", "France", "United States", "United Kingdom"],
+                correct: 1
+            },
+            {
+                question: "What is the capital of Burkina Faso?",
+                options: ["Accra", "Ouagadougou", "Bamako", "Niamey"],
+                correct: 1
+            },
+            {
+                question: "Which is the smallest country in the world by area?",
+                options: ["Monaco", "San Marino", "Vatican City", "Liechtenstein"],
+                correct: 2
+            },
+            {
+                question: "What is the deepest point in the world's oceans?",
+                options: ["Mariana Trench", "Tonga Trench", "Philippine Trench", "Kuril-Kamchatka Trench"],
+                correct: 0
+            },
+            {
+                question: "Which country is the largest landlocked country in the world?",
+                options: ["Kazakhstan", "Mongolia", "Afghanistan", "Bolivia"],
+                correct: 0
+            },
+            {
+                question: "What is the capital of Djibouti?",
+                options: ["Djibouti City", "Tadjoura", "Arta", "Ali Adde"],
+                correct: 0
+            },
+            {
+                question: "Which mountain range is the longest in the world?",
+                options: ["Rocky Mountains", "Andes", "Himalayas", "Mid-Ocean Ridge System"],
+                correct: 3
+            },
+            {
+                question: "What is the second-longest river in the world?",
+                options: ["Amazon", "Yangtze", "Nile", "Mississippi-Missouri"],
+                correct: 0
+            },
+            {
+                question: "Which country has the most islands?",
+                options: ["Indonesia", "Philippines", "Sweden", "Norway"],
+                correct: 0
+            },
+            {
+                question: "What is the capital of Equatorial Guinea?",
+                options: ["Malabo", "Bata", "Ebebiyin", "Mongomo"],
+                correct: 0
+            },
+            {
+                question: "Which is the hottest place on Earth?",
+                options: ["Death Valley", "Kebili Tunisia", "Dasht-e Lut", "Lut Desert"],
+                correct: 2
+            },
+            {
+                question: "What is the capital of São Tomé and Príncipe?",
+                options: ["Santo António", "São Tomé", "Neves", "Água Grande"],
+                correct: 1
+            },
+            {
+                question: "Which country is home to the Dead Sea?",
+                options: ["Jordan", "Israel", "Palestine", "All of the above"],
+                correct: 3
+            },
+            {
+                question: "What is the capital of Mauritius?",
+                options: ["Port Louis", "Beau Bassin-Rose Hill", "Vacoas-Phoenix", "Curepipe"],
+                correct: 0
+            },
+            {
+                question: "Which is the southernmost capital city in the world?",
+                options: ["Christchurch", "Wellington", "Hobart", "Ushuaia"],
+                correct: 3
+            },
+            {
+                question: "What is the capital of Seychelles?",
+                options: ["Mahe", "Victoria", "Praslin", "Silhouette"],
+                correct: 1
+            },
+            {
+                question: "Which country has more than 7,000 islands?",
+                options: ["Philippines", "Indonesia", "Micronesia", "Bahamas"],
+                correct: 1
+            },
+            {
+                question: "What is the capital of Comoros?",
+                options: ["Moroni", "Mutsamudu", "Fomboni", "Ntsoudjini"],
+                correct: 0
+            },
+            {
+                question: "Which mountain is the second-highest in the world?",
+                options: ["Kangchenjunga", "Lhotse", "Makalu", "K2"],
+                correct: 3
+            },
+            {
+                question: "What is the capital of Cabo Verde?",
+                options: ["Praia", "Tarrafal", "Santa Maria", "Ribeira Grande"],
+                correct: 0
+            },
+            {
+                question: "Which country is home to the Atacama Desert?",
+                options: ["Peru", "Chile", "Argentina", "Bolivia"],
+                correct: 1
+            },
+            {
+                question: "What is the capital of São Tomé and Príncipe?",
+                options: ["Santo António", "São Tomé", "Neves", "Trindade"],
+                correct: 1
+            },
+            {
+                question: "Which is the wettest place on Earth?",
+                options: ["Cherrapunji", "Mawsynram", "Lloró", "Tutendo"],
+                correct: 1
+            },
+            {
+                question: "What is the capital of Mauritania?",
+                options: ["Nouakchott", "Atar", "Kaedi", "Rosso"],
+                correct: 0
+            },
+            {
+                question: "Which country is located on the Horn of Africa?",
+                options: ["Somalia", "Ethiopia", "Eritrea", "All of the above"],
+                correct: 3
+            },
+            {
+                question: "What is the capital of Benin?",
+                options: ["Cotonou", "Porto-Novo", "Abomey", "Djougou"],
+                correct: 1
+            },
+            {
+                question: "Which desert is the coldest in the world?",
+                options: ["Atacama", "Gobi", "Antarctic", "Arctic"],
+                correct: 2
+            },
+            {
+                question: "What is the capital of Gabon?",
+                options: ["Libreville", "Port-Gentil", "Franceville", "Oyem"],
+                correct: 0
+            },
+            {
+                question: "Which country is the least densely populated in the world?",
+                options: ["Greenland", "Mongolia", "Mauritania", "Namibia"],
+                correct: 0
+            },
+            {
+                question: "What is the capital of Guinea-Bissau?",
+                options: ["Bissau", "Gabu", "Cacheu", "Bafata"],
+                correct: 0
+            },
+            {
+                question: "Which bay is the largest in the world?",
+                options: ["Hudson Bay", "Bengal Bay", "Mexico Bay", "Arabian Sea"],
+                correct: 0
+            },
+            {
+                question: "What is the capital of Liberia?",
+                options: ["Monrovia", "Gbarnga", "Buchanan", "Kakata"],
+                correct: 0
+            },
+            {
+                question: "Which country has the Great Barrier Reef?",
+                options: ["New Zealand", "Australia", "Fiji", "Papua New Guinea"],
+                correct: 1
+            },
+            {
+                question: "What is the capital of Sierra Leone?",
+                options: ["Freetown", "Kenema", "Makeni", "Bo"],
+                correct: 0
+            },
+            {
+                question: "Which is the only country in the world with four capital cities?",
+                options: ["South Africa", "Australia", "Brazil", "United States"],
+                correct: 0
+            },
+            {
+                question: "What is the capital of Togo?",
+                options: ["Lomé", "Sokodé", "Kpalimé", "Tsévié"],
+                correct: 0
+            }
+        ];
+
+        let geoState = {
+            currentQuestion: 0,
+            answers: new Array(40).fill(-1),
+            answered: new Array(40).fill(false),
+            submitted: false,
+            questionTimer: 20,
+            timerInterval: null
+        };
+
+        function initializePuzzle() {
+            // Show start screen initially
+            document.getElementById('geoStartScreen').style.display = 'block';
+            document.getElementById('geoQuizContent').style.display = 'none';
+        }
+
+        function startGeographyQuiz() {
+            document.getElementById('geoStartScreen').style.display = 'none';
+            document.getElementById('geoQuizContent').style.display = 'block';
+            loadGeoQuestion(0);
+        }
+
+        function loadGeoQuestion(index) {
+            geoState.currentQuestion = index;
+            const question = geographyQuestions[index];
+
+            document.getElementById('geoQuestion').textContent = question.question;
+            document.getElementById('optionA').textContent = question.options[0];
+            document.getElementById('optionB').textContent = question.options[1];
+            document.getElementById('optionC').textContent = question.options[2];
+            document.getElementById('optionD').textContent = question.options[3];
+            document.getElementById('geoCount').textContent = `Question ${index + 1} of ${geographyQuestions.length}`;
+
+            // Reset button states
+            document.querySelectorAll('.geo-option-btn').forEach(btn => {
+                btn.classList.remove('correct', 'wrong');
+                btn.disabled = false;
+            });
+
+            // Update progress
+            const progress = ((index + 1) / geographyQuestions.length) * 100;
+            document.getElementById('geoProgress').style.width = progress + '%';
+
+            // Start timer for this question if not already answered
+            if (!geoState.answered[index]) {
+                startQuestionTimer();
+            } else {
+                // Stop timer if question already answered
+                if (geoState.timerInterval) {
+                    clearInterval(geoState.timerInterval);
+                }
+                document.getElementById('questionTimer').textContent = '-';
+            }
+
+            // Show selected answer if already answered
+            if (geoState.answered[index]) {
+                const selectedOption = geoState.answers[index];
+                const buttons = document.querySelectorAll('.geo-option-btn');
+                if (selectedOption === question.correct) {
+                    buttons[selectedOption].classList.add('correct');
+                } else {
+                    buttons[selectedOption].classList.add('wrong');
+                    buttons[question.correct].classList.add('correct');
+                }
+                document.querySelectorAll('.geo-option-btn').forEach(btn => btn.disabled = true);
+            }
+
+            // Update navigation buttons
+            document.getElementById('prevGeoBtn').disabled = index === 0;
+            if (index === geographyQuestions.length - 1) {
+                document.getElementById('nextGeoBtn').style.display = 'none';
+                document.getElementById('submitGeoBtn').style.display = 'block';
+            } else {
+                document.getElementById('nextGeoBtn').style.display = 'block';
+                document.getElementById('submitGeoBtn').style.display = 'none';
+            }
+        }
+
+        function startQuestionTimer() {
+            if (geoState.timerInterval) {
+                clearInterval(geoState.timerInterval);
+            }
+
+            geoState.questionTimer = 20;
+            updateQuestionTimerDisplay();
+
+            geoState.timerInterval = setInterval(() => {
+                geoState.questionTimer--;
+                updateQuestionTimerDisplay();
+
+                if (geoState.questionTimer <= 0) {
+                    clearInterval(geoState.timerInterval);
+                    // Auto-move to next question when time is up
+                    if (geoState.currentQuestion < geographyQuestions.length - 1) {
+                        nextGeoQuestion();
+                    }
+                }
+            }, 1000);
+        }
+
+        function updateQuestionTimerDisplay() {
+            const timerElement = document.getElementById('questionTimer');
+            timerElement.textContent = geoState.questionTimer + 's';
+
+            if (geoState.questionTimer <= 5) {
+                timerElement.style.color = '#f44336'; // Red
+            } else if (geoState.questionTimer <= 10) {
+                timerElement.style.color = '#ff9800'; // Orange
+            } else {
+                timerElement.style.color = '#667eea'; // Blue
+            }
+        }
+
+        function selectGeoAnswer(optionIndex, label) {
+            if (geoState.answered[geoState.currentQuestion]) return;
+
+            // Stop the timer when answer is selected
+            if (geoState.timerInterval) {
+                clearInterval(geoState.timerInterval);
+            }
+            document.getElementById('questionTimer').textContent = '-';
+
+            const question = geographyQuestions[geoState.currentQuestion];
+            const buttons = document.querySelectorAll('.geo-option-btn');
+
+            geoState.answers[geoState.currentQuestion] = optionIndex;
+            geoState.answered[geoState.currentQuestion] = true;
+
+            // Show correct/wrong feedback
+            if (optionIndex === question.correct) {
+                buttons[optionIndex].classList.add('correct');
+            } else {
+                buttons[optionIndex].classList.add('wrong');
+                buttons[question.correct].classList.add('correct');
+            }
+
+            // Disable all buttons after selection
+            buttons.forEach(btn => btn.disabled = true);
+
+            // Check if all questions are answered
+            const allAnswered = geoState.answered.every(a => a);
+            if (allAnswered && geoState.currentQuestion === geographyQuestions.length - 1) {
+                document.getElementById('submitGeoBtn').style.display = 'block';
+                document.getElementById('nextGeoBtn').style.display = 'none';
+            }
+        }
+
+        function nextGeoQuestion() {
+            if (geoState.currentQuestion < geographyQuestions.length - 1) {
+                loadGeoQuestion(geoState.currentQuestion + 1);
+            }
+        }
+
+        function previousGeoQuestion() {
+            if (geoState.currentQuestion > 0) {
+                loadGeoQuestion(geoState.currentQuestion - 1);
+            }
+        }
+
+        function submitGeography() {
+            const correct = geoState.answers.filter((answer, index) => answer === geographyQuestions[index].correct).length;
+            alert(`🎉 Quiz Complete! You got ${correct}/${geographyQuestions.length} correct!`);
+            geoState.submitted = true;
+            document.getElementById('puzzleSubmissionStatus').textContent = 'Geography Quiz completed! Ready to submit';
+            document.getElementById('puzzleSubmissionStatus').className = 'submission-status success';
+            document.getElementById('puzzleSubmitBtn').disabled = false;
+            document.getElementById('puzzleSubmission').classList.add('active');
+        }
+
+        function startPuzzleTimer() {
+            gameState.puzzleTime = 600;
+            updatePuzzleTimerDisplay();
+
+            gameState.puzzleTimerInterval = setInterval(() => {
+                gameState.puzzleTime--;
+                updatePuzzleTimerDisplay();
+
+                if (gameState.puzzleTime <= 0) {
+                    clearInterval(gameState.puzzleTimerInterval);
+                    alert('Time\'s up! Puzzle session ended.');
+                    resetPuzzle();
+                }
+            }, 1000);
+
+            initializePuzzle();
+        }
+
+        function updatePuzzleTimerDisplay() {
+            const minutes = Math.floor(gameState.puzzleTime / 60);
+            const seconds = gameState.puzzleTime % 60;
+            const timerElement = document.getElementById('puzzleTimer');
+            timerElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+
+            if (gameState.puzzleTime <= 60) {
+                timerElement.classList.add('danger');
+            } else if (gameState.puzzleTime <= 180) {
+                timerElement.classList.add('warning');
+            }
+        }
+
+        function submitPuzzle() {
+            if (!gameState.puzzleCompleted) {
+                alert('Please complete the puzzle first!');
+                return;
+            }
+
+            alert('🎉 Puzzle submitted successfully! Great job!');
+            document.getElementById('puzzleSubmissionStatus').textContent = 'Puzzle submission confirmed ✓';
+            document.getElementById('puzzleSubmissionStatus').className = 'submission-status completed';
+        }
+
+        function resetPuzzle() {
+            if (gameState.puzzleTimerInterval) clearInterval(gameState.puzzleTimerInterval);
+            gameState.puzzleCompleted = false;
+            document.getElementById('puzzleSubmitBtn').disabled = true;
+            document.getElementById('puzzleSubmissionStatus').textContent = 'Complete the puzzle to submit';
+            document.getElementById('puzzleSubmissionStatus').className = 'submission-status waiting';
+            document.getElementById('puzzleSubmission').classList.remove('active');
+            initializePuzzle();
+        }
+
+        // ==================== QUIZ LOGIC ====================
+        function addQuestionInput() {
+            const container = document.getElementById('questionsContainer');
+            const questionIndex = gameState.quizData.length;
+
+            const questionDiv = document.createElement('div');
+            questionDiv.className = 'question-entry';
+            questionDiv.id = `question-${questionIndex}`;
+            questionDiv.innerHTML = `
+                <h4>Question ${questionIndex + 1}</h4>
+                <div class="form-group">
+                    <label>Question Text</label>
+                    <input type="text" placeholder="Enter your question" class="question-text" onchange="updateQuizData()">
+                </div>
+                <div class="form-group">
+                    <label>Options</label>
+                    <div class="option-input">
+                        <input type="text" placeholder="Option 1" class="option-0">
+                        <label>
+                            <input type="radio" name="correct-${questionIndex}" value="0"> Correct
+                        </label>
+                    </div>
+                    <div class="option-input">
+                        <input type="text" placeholder="Option 2" class="option-1">
+                        <label>
+                            <input type="radio" name="correct-${questionIndex}" value="1"> Correct
+                        </label>
+                    </div>
+                    <div class="option-input">
+                        <input type="text" placeholder="Option 3" class="option-2">
+                        <label>
+                            <input type="radio" name="correct-${questionIndex}" value="2"> Correct
+                        </label>
+                    </div>
+                    <div class="option-input">
+                        <input type="text" placeholder="Option 4" class="option-3">
+                        <label>
+                            <input type="radio" name="correct-${questionIndex}" value="3"> Correct
+                        </label>
+                    </div>
+                </div>
+                <button class="btn btn-danger" onclick="removeQuestion(${questionIndex})">Remove Question</button>
+            `;
+
+            container.appendChild(questionDiv);
+
+            // Add new data entry
+            gameState.quizData.push({
+                id: questionIndex,
+                question: '',
+                options: ['', '', '', ''],
+                correctAnswer: -1
+            });
+
+            updateQuizSetupStatus();
+        }
+
+        function updateQuizData() {
+            document.querySelectorAll('.question-entry').forEach((entry, index) => {
+                const questionText = entry.querySelector('.question-text').value;
+                const options = [];
+                let correctAnswer = -1;
+
+                for (let i = 0; i < 4; i++) {
+                    options.push(entry.querySelector(`.option-${i}`).value);
+                    const radio = entry.querySelector(`input[name="correct-${index}"][value="${i}"]`);
+                    if (radio && radio.checked) {
+                        correctAnswer = i;
+                    }
+                }
+
+                if (index < gameState.quizData.length) {
+                    gameState.quizData[index] = {
+                        id: index,
+                        question: questionText,
+                        options: options,
+                        correctAnswer: correctAnswer
+                    };
+                }
+            });
+
+            updateQuizSetupStatus();
+        }
+
+        function removeQuestion(index) {
+            document.getElementById(`question-${index}`).remove();
+            gameState.quizData = gameState.quizData.filter((_, i) => i !== index);
+            updateQuizSetupStatus();
+        }
+
+        function updateQuizSetupStatus() {
+            const validQuestions = gameState.quizData.filter(q => 
+                q.question.trim() && q.options.every(o => o.trim()) && q.correctAnswer >= 0
+            ).length;
+
+            const status = document.getElementById('quizSetupStatus');
+            const startBtn = document.getElementById('startQuizBtn');
+
+            if (validQuestions > 0) {
+                status.textContent = `${validQuestions} valid question(s) ready. Click Start Quiz to begin!`;
+                status.className = 'submission-status success';
+                startBtn.disabled = false;
+            } else {
+                status.textContent = 'Add at least one complete question to start';
+                status.className = 'submission-status waiting';
+                startBtn.disabled = true;
+            }
+        }
+
+        function showQuizSetup() {
+            document.getElementById('quizStartScreen').style.display = 'none';
+            document.getElementById('quizSetup').style.display = 'block';
+        }
+
+        function startQuiz() {
+            updateQuizData(); // Ensure latest data is captured
+
+            const validQuestions = gameState.quizData.filter(q => 
+                q.question.trim() && q.options.every(o => o.trim()) && q.correctAnswer >= 0
+            );
+
+            if (validQuestions.length === 0) {
+                alert('Please add at least one complete question first!');
+                return;
+            }
+
+            gameState.quizData = validQuestions;
+            gameState.quizAnswers = new Array(gameState.quizData.length).fill(-1);
+            gameState.quizStarted = true;
+            gameState.quizCompleted = false;
+
+            // Hide setup, show questions
+            document.getElementById('quizSetup').style.display = 'none';
+            document.getElementById('quizDisplay').classList.add('active');
+            document.getElementById('quizScoreDisplay').style.display = 'none';
+
+            renderQuizQuestions();
+
+            // Start timer
+            if (gameState.quizTimerInterval) clearInterval(gameState.quizTimerInterval);
+            startQuizTimer();
+        }
+
+        function renderQuizQuestions() {
+            const container = document.getElementById('questionsDisplay');
+            container.innerHTML = '';
+
+            gameState.quizData.forEach((q, index) => {
+                const questionCard = document.createElement('div');
+                questionCard.className = 'question-card';
+                questionCard.innerHTML = `
+                    <h3>Question ${index + 1}: ${q.question}</h3>
+                    <div class="options">
+                        ${q.options.map((option, optIndex) => `
+                            <label class="option" onclick="selectQuizAnswer(${index}, ${optIndex})">
+                                <input type="radio" name="question-${index}" value="${optIndex}">
+                                ${option}
+                            </label>
+                        `).join('')}
+                    </div>
+                `;
+                container.appendChild(questionCard);
+            });
+        }
+
+        function selectQuizAnswer(questionIndex, optionIndex) {
+            gameState.quizAnswers[questionIndex] = optionIndex;
+
+            // Update UI
+            document.querySelectorAll(`input[name="question-${questionIndex}"]`).forEach((input, i) => {
+                const label = input.closest('.option');
+                if (i === optionIndex) {
+                    input.checked = true;
+                    label.classList.add('selected');
+                } else {
+                    label.classList.remove('selected');
+                }
+            });
+        }
+
+        function finishQuiz() {
+            updateQuizData();
+            let score = 0;
+
+            gameState.quizAnswers.forEach((answer, index) => {
+                if (answer === gameState.quizData[index].correctAnswer) {
+                    score++;
+                }
+            });
+
+            gameState.quizCompleted = true;
+            displayQuizScore(score);
+        }
+
+        function displayQuizScore(score) {
+            document.getElementById('questionsDisplay').style.display = 'none';
+            document.getElementById('quizScoreDisplay').style.display = 'block';
+            document.getElementById('scoreText').textContent = `Your Score: ${score}/${gameState.quizData.length}`;
+
+            const percentage = Math.round((score / gameState.quizData.length) * 100);
+            const message = percentage >= 80 ? 'Excellent!' : percentage >= 60 ? 'Good Job!' : 'Keep Practicing!';
+            document.getElementById('scoreText').textContent += ` - ${message}`;
+        }
+
+        function submitQuiz() {
+            if (!gameState.quizCompleted) {
+                alert('Please complete the quiz first!');
+                return;
+            }
+
+            alert('🎉 Quiz submitted successfully! Your results have been saved!');
+        }
+
+        function resetQuizDisplay() {
+            document.getElementById('quizStartScreen').style.display = 'block';
+            document.getElementById('quizSetup').style.display = 'none';
+            document.getElementById('quizDisplay').classList.remove('active');
+            document.getElementById('questionsDisplay').style.display = 'block';
+            document.getElementById('quizScoreDisplay').style.display = 'none';
+            gameState.quizStarted = false;
+            gameState.quizCompleted = false;
+
+            if (gameState.quizTimerInterval) clearInterval(gameState.quizTimerInterval);
+        }
+
+        function resetQuiz() {
+            if (gameState.quizTimerInterval) clearInterval(gameState.quizTimerInterval);
+            document.getElementById('questionsContainer').innerHTML = '';
+            gameState.quizData = [];
+            gameState.quizAnswers = [];
+            gameState.quizStarted = false;
+            gameState.quizCompleted = false;
+            updateQuizSetupStatus();
+        }
+
+        function startQuizTimer() {
+            gameState.quizTime = 600;
+            updateQuizTimerDisplay();
+
+            gameState.quizTimerInterval = setInterval(() => {
+                gameState.quizTime--;
+                updateQuizTimerDisplay();
+
+                if (gameState.quizTime <= 0) {
+                    clearInterval(gameState.quizTimerInterval);
+                    alert('Time\'s up! Quiz session ended.');
+                    finishQuiz();
+                }
+            }, 1000);
+        }
+
+        function updateQuizTimerDisplay() {
+            const minutes = Math.floor(gameState.quizTime / 60);
+            const seconds = gameState.quizTime % 60;
+            const timerElement = document.getElementById('quizTimer');
+            timerElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+
+            if (gameState.quizTime <= 60) {
+                timerElement.classList.add('danger');
+            } else if (gameState.quizTime <= 180) {
+                timerElement.classList.add('warning');
+            }
+        }
+
+        // ==================== LOGO QUIZ LOGIC ====================
+        function addLogoQuestionInput() {
+            const container = document.getElementById('logoQuestionsContainer');
+            const questionIndex = gameState.logoQuizData.length;
+
+            const questionDiv = document.createElement('div');
+            questionDiv.className = 'question-entry';
+            questionDiv.id = `logo-question-${questionIndex}`;
+            questionDiv.innerHTML = `
+                <h4>Logo Question ${questionIndex + 1}</h4>
+                <div class="form-group">
+                    <label>Question Text</label>
+                    <input type="text" placeholder="Enter your logo question" class="question-text" onchange="updateLogoQuizData()">
+                </div>
+                <div class="form-group">
+                    <label>Options</label>
+                    <div class="option-input">
+                        <input type="text" placeholder="Option 1" class="option-0">
+                        <label>
+                            <input type="radio" name="correct-logo-${questionIndex}" value="0"> Correct
+                        </label>
+                    </div>
+                    <div class="option-input">
+                        <input type="text" placeholder="Option 2" class="option-1">
+                        <label>
+                            <input type="radio" name="correct-logo-${questionIndex}" value="1"> Correct
+                        </label>
+                    </div>
+                    <div class="option-input">
+                        <input type="text" placeholder="Option 3" class="option-2">
+                        <label>
+                            <input type="radio" name="correct-logo-${questionIndex}" value="2"> Correct
+                        </label>
+                    </div>
+                    <div class="option-input">
+                        <input type="text" placeholder="Option 4" class="option-3">
+                        <label>
+                            <input type="radio" name="correct-logo-${questionIndex}" value="3"> Correct
+                        </label>
+                    </div>
+                </div>
+                <button class="btn btn-danger" onclick="removeLogoQuestion(${questionIndex})">Remove Question</button>
+            `;
+
+            container.appendChild(questionDiv);
+
+            gameState.logoQuizData.push({
+                id: questionIndex,
+                question: '',
+                options: ['', '', '', ''],
+                correctAnswer: -1
+            });
+
+            updateLogoQuizSetupStatus();
+        }
+
+        function updateLogoQuizData() {
+            document.querySelectorAll('#logoQuestionsContainer .question-entry').forEach((entry, index) => {
+                const questionText = entry.querySelector('.question-text').value;
+                const options = [];
+                let correctAnswer = -1;
+
+                for (let i = 0; i < 4; i++) {
+                    options.push(entry.querySelector(`.option-${i}`).value);
+                    const radio = entry.querySelector(`input[name="correct-logo-${index}"][value="${i}"]`);
+                    if (radio && radio.checked) {
+                        correctAnswer = i;
+                    }
+                }
+
+                if (index < gameState.logoQuizData.length) {
+                    gameState.logoQuizData[index] = {
+                        id: index,
+                        question: questionText,
+                        options: options,
+                        correctAnswer: correctAnswer
+                    };
+                }
+            });
+
+            updateLogoQuizSetupStatus();
+        }
+
+        function removeLogoQuestion(index) {
+            document.getElementById(`logo-question-${index}`).remove();
+            gameState.logoQuizData = gameState.logoQuizData.filter((_, i) => i !== index);
+            updateLogoQuizSetupStatus();
+        }
+
+        function updateLogoQuizSetupStatus() {
+            const validQuestions = gameState.logoQuizData.filter(q => 
+                q.question.trim() && q.options.every(o => o.trim()) && q.correctAnswer >= 0
+            ).length;
+
+            const status = document.getElementById('logoSetupStatus');
+            const startBtn = document.getElementById('startLogoQuizBtn');
+
+            if (validQuestions > 0) {
+                status.textContent = `${validQuestions} valid question(s) ready. Click Start Logo Quiz to begin!`;
+                status.className = 'submission-status success';
+                startBtn.disabled = false;
+            } else {
+                status.textContent = 'Add at least one complete question to start';
+                status.className = 'submission-status waiting';
+                startBtn.disabled = true;
+            }
+        }
+
+        function showLogoSetup() {
+            document.getElementById('logoStartScreen').style.display = 'none';
+            document.getElementById('logoSetup').style.display = 'block';
+        }
+
+        function startLogoQuiz() {
+            updateLogoQuizData();
+
+            const validQuestions = gameState.logoQuizData.filter(q => 
+                q.question.trim() && q.options.every(o => o.trim()) && q.correctAnswer >= 0
+            );
+
+            if (validQuestions.length === 0) {
+                alert('Please add at least one complete question first!');
+                return;
+            }
+
+            gameState.logoQuizData = validQuestions;
+            gameState.logoQuizAnswers = new Array(gameState.logoQuizData.length).fill(-1);
+            gameState.logoStarted = true;
+            gameState.logoCompleted = false;
+
+            document.getElementById('logoSetup').style.display = 'none';
+            document.getElementById('logoDisplay').classList.add('active');
+            document.getElementById('logoScoreDisplay').style.display = 'none';
+
+            renderLogoQuizQuestions();
+
+            if (gameState.logoTimerInterval) clearInterval(gameState.logoTimerInterval);
+            startLogoTimer();
+        }
+
+        function renderLogoQuizQuestions() {
+            const container = document.getElementById('logoQuestionsDisplay');
+            container.innerHTML = '';
+
+            gameState.logoQuizData.forEach((q, index) => {
+                const questionCard = document.createElement('div');
+                questionCard.className = 'question-card';
+                questionCard.innerHTML = `
+                    <h3>Question ${index + 1}: ${q.question}</h3>
+                    <div class="options">
+                        ${q.options.map((option, optIndex) => `
+                            <label class="option" onclick="selectLogoQuizAnswer(${index}, ${optIndex})">
+                                <input type="radio" name="logo-question-${index}" value="${optIndex}">
+                                ${option}
+                            </label>
+                        `).join('')}
+                    </div>
+                `;
+                container.appendChild(questionCard);
+            });
+        }
+
+        function selectLogoQuizAnswer(questionIndex, optionIndex) {
+            gameState.logoQuizAnswers[questionIndex] = optionIndex;
+
+            document.querySelectorAll(`input[name="logo-question-${questionIndex}"]`).forEach((input, i) => {
+                const label = input.closest('.option');
+                if (i === optionIndex) {
+                    input.checked = true;
+                    label.classList.add('selected');
+                } else {
+                    label.classList.remove('selected');
+                }
+            });
+        }
+
+        function finishLogoQuiz() {
+            updateLogoQuizData();
+            let score = 0;
+
+            gameState.logoQuizAnswers.forEach((answer, index) => {
+                if (answer === gameState.logoQuizData[index].correctAnswer) {
+                    score++;
+                }
+            });
+
+            gameState.logoCompleted = true;
+            displayLogoQuizScore(score);
+        }
+
+        function displayLogoQuizScore(score) {
+            document.getElementById('logoQuestionsDisplay').style.display = 'none';
+            document.getElementById('logoScoreDisplay').style.display = 'block';
+            document.getElementById('logoScoreText').textContent = `Your Score: ${score}/${gameState.logoQuizData.length}`;
+
+            const percentage = Math.round((score / gameState.logoQuizData.length) * 100);
+            const message = percentage >= 80 ? 'Excellent!' : percentage >= 60 ? 'Good Job!' : 'Keep Practicing!';
+            document.getElementById('logoScoreText').textContent += ` - ${message}`;
+        }
+
+        function submitLogoQuiz() {
+            if (!gameState.logoCompleted) {
+                alert('Please complete the quiz first!');
+                return;
+            }
+
+            alert('🎉 Logo Quiz submitted successfully! Your results have been saved!');
+        }
+
+        function resetLogoQuizDisplay() {
+            document.getElementById('logoStartScreen').style.display = 'block';
+            document.getElementById('logoSetup').style.display = 'none';
+            document.getElementById('logoDisplay').classList.remove('active');
+            document.getElementById('logoQuestionsDisplay').style.display = 'block';
+            document.getElementById('logoScoreDisplay').style.display = 'none';
+            gameState.logoStarted = false;
+            gameState.logoCompleted = false;
+
+            if (gameState.logoTimerInterval) clearInterval(gameState.logoTimerInterval);
+        }
+
+        function resetLogoQuiz() {
+            if (gameState.logoTimerInterval) clearInterval(gameState.logoTimerInterval);
+            document.getElementById('logoQuestionsContainer').innerHTML = '';
+            gameState.logoQuizData = [];
+            gameState.logoQuizAnswers = [];
+            gameState.logoStarted = false;
+            gameState.logoCompleted = false;
+            updateLogoQuizSetupStatus();
+        }
+
+        function startLogoTimer() {
+            gameState.logoTime = 600;
+            updateLogoTimerDisplay();
+
+            gameState.logoTimerInterval = setInterval(() => {
+                gameState.logoTime--;
+                updateLogoTimerDisplay();
+
+                if (gameState.logoTime <= 0) {
+                    clearInterval(gameState.logoTimerInterval);
+                    alert('Time\'s up! Logo Quiz session ended.');
+                    finishLogoQuiz();
+                }
+            }, 1000);
+        }
+
+        function updateLogoTimerDisplay() {
+            const minutes = Math.floor(gameState.logoTime / 60);
+            const seconds = gameState.logoTime % 60;
+            const timerElement = document.getElementById('logoTimer');
+            timerElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+
+            if (gameState.logoTime <= 60) {
+                timerElement.classList.add('danger');
+            } else if (gameState.logoTime <= 180) {
+                timerElement.classList.add('warning');
+            }
+        }
+
+        // Initialize on page load
+        window.addEventListener('load', () => {
+            initializePuzzle();
+        });
+    </script>
+
+    <footer style="text-align: center; padding: 20px; color: white; font-size: 0.9em; margin-top: 30px; font-weight: bold; position: fixed; bottom: 0; left: 0; right: 0; background: rgba(0, 0, 0, 0.5); z-index: 1000;">
+        <p>Created by Rakuten141</p>
+    </footer>
+</body>
+</html>
