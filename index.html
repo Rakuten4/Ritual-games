@@ -20,14 +20,37 @@
             min-height: 100vh;
             display: flex;
             justify-content: center;
-            align-items: center;
+            align-items: flex-start;
             padding: 20px;
             zoom: 0.8;
+            padding-bottom: 100px;
         }
 
         .container {
-            max-width: 1000px;
+            max-width: 1600px;
             width: 100%;
+            display: grid;
+            grid-template-columns: 280px 1fr 280px;
+            gap: 15px;
+            align-items: flex-start;
+        }
+
+        .teams-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            position: sticky;
+            top: 20px;
+            height: fit-content;
+        }
+
+        .teams-sidebar-right {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            position: sticky;
+            top: 20px;
+            height: fit-content;
         }
 
         .header {
@@ -45,6 +68,175 @@
         .header p {
             font-size: 1.1em;
             opacity: 0.9;
+        }
+
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .team-box {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 5px solid;
+        }
+
+        .team-box.teamA {
+            border-left-color: #667eea;
+        }
+
+        .team-box.teamB {
+            border-left-color: #f5576c;
+        }
+
+        .team-box h3 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+            color: #333;
+        }
+
+        .team-box.teamA h3 {
+            color: #667eea;
+        }
+
+        .team-box.teamB h3 {
+            color: #f5576c;
+        }
+
+        .team-members-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-height: 400px;
+            overflow-y: auto;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+        }
+
+        .team-member-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f9f9f9;
+            padding: 10px;
+            border-radius: 6px;
+            border-left: 3px solid;
+            font-size: 0.9em;
+        }
+
+        .team-member-item.teamA {
+            border-left-color: #667eea;
+        }
+
+        .team-member-item.teamB {
+            border-left-color: #f5576c;
+        }
+
+        .team-member-name {
+            flex: 1;
+            font-weight: 500;
+            color: #333;
+            word-break: break-word;
+        }
+
+        .team-member-remove {
+            background: #ff6b6b;
+            border: none;
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.2s;
+            flex-shrink: 0;
+            margin-left: 8px;
+        }
+
+        .team-member-remove:hover {
+            background: #ff5252;
+        }
+
+        .team-member-remove:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .team-input-group {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 12px;
+            flex-direction: column;
+        }
+
+        .team-input-group input {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 0.9em;
+        }
+
+        .team-input-group input:disabled {
+            background: #f0f0f0;
+            cursor: not-allowed;
+        }
+
+        .team-input-group button {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+            background: #667eea;
+            color: white;
+            font-size: 0.9em;
+        }
+
+        .team-input-group button:hover:not(:disabled) {
+            background: #5568d3;
+            transform: translateY(-2px);
+        }
+
+        .team-input-group button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .team-box.teamB .team-input-group button {
+            background: #f5576c;
+        }
+
+        .team-box.teamB .team-input-group button:hover:not(:disabled) {
+            background: #e84655;
+        }
+
+        .team-count {
+            text-align: center;
+            font-size: 0.85em;
+            color: #666;
+            font-weight: bold;
+        }
+
+        .teams-locked-message {
+            text-align: center;
+            color: #f44336;
+            font-weight: bold;
+            padding: 8px;
+            background: #ffebee;
+            border-radius: 6px;
+            display: none;
+            margin-top: 8px;
+            font-size: 0.85em;
+        }
+
+        .teams-locked-message.show {
+            display: block;
         }
 
         .section-selector {
@@ -171,6 +363,10 @@
             font-size: 1.5em;
             font-weight: bold;
             margin-bottom: 20px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            overflow: hidden;
         }
 
         .geo-options {
@@ -549,12 +745,28 @@
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <h1>RITUAL</h1>
-            <p>Games & Challenges</p>
+        <!-- Team A Sidebar (Left) -->
+        <div class="teams-sidebar" id="teamsSidebar">
+            <div class="team-box teamA">
+                <h3>Team A</h3>
+                <div class="team-input-group">
+                    <input type="text" id="teamAInput" placeholder="Enter name" maxlength="20">
+                    <button id="addTeamABtn" onclick="addTeamMember('A')">Add</button>
+                </div>
+                <div class="team-members-list" id="teamAList"></div>
+                <div class="team-count" id="teamACount">0 / 10 members</div>
+                <div class="teams-locked-message" id="teamALocked">Teams locked</div>
+            </div>
         </div>
 
-        <div class="section-selector">
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="header">
+                <h1>RITUAL</h1>
+                <p>Games & Challenges</p>
+            </div>
+
+            <div class="section-selector">
             <button class="section-btn active" onclick="switchSection('puzzle')">Geography Quizzes</button>
             <button class="section-btn" onclick="switchSection('quiz')">Quiz Time</button>
             <button class="section-btn" onclick="switchSection('logo')">Logo Quizzes</button>
@@ -593,7 +805,10 @@
 
                     <div class="geography-question-card">
                         <div class="geo-location-info">
-                            <h3 id="geoQuestion">What is this famous landmark?</h3>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                                <h3 id="geoQuestion" style="margin: 0; flex: 1;">What is this famous landmark?</h3>
+                                <div id="teamIndicator" style="background: #667eea; color: white; padding: 8px 16px; border-radius: 20px; font-weight: bold; font-size: 0.9em;">Team A</div>
+                            </div>
                             <div id="geoLocationImage" class="location-image-placeholder">
                                 📍 Geographic Location
                             </div>
@@ -630,6 +845,33 @@
             <div class="submission-area" id="puzzleSubmission">
                 <p class="submission-status waiting" id="puzzleSubmissionStatus">Complete all questions to submit</p>
                 <button class="btn btn-primary" id="puzzleSubmitBtn" onclick="submitPuzzle()" disabled>Submit Geography Quiz</button>
+            </div>
+
+            <!-- Geography Results -->
+            <div id="geoResultsDisplay" style="display: none;">
+                <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 40px; border-radius: 12px; text-align: center; margin-bottom: 30px;">
+                    <h2 style="font-size: 2.5em; margin-bottom: 20px;">Quiz Complete! 🎉</h2>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 30px 0;">
+                        <!-- Team A Results -->
+                        <div style="background: rgba(255,255,255,0.1); padding: 25px; border-radius: 8px; border: 2px solid #667eea;">
+                            <h3 style="font-size: 1.8em; margin-bottom: 15px;">Team A</h3>
+                            <div style="font-size: 2.5em; font-weight: bold; margin-bottom: 10px;" id="teamAResult">0/20</div>
+                            <div style="font-size: 1.2em;" id="teamAPercentage">0%</div>
+                        </div>
+
+                        <!-- Team B Results -->
+                        <div style="background: rgba(255,255,255,0.1); padding: 25px; border-radius: 8px; border: 2px solid #f5576c;">
+                            <h3 style="font-size: 1.8em; margin-bottom: 15px;">Team B</h3>
+                            <div style="font-size: 2.5em; font-weight: bold; margin-bottom: 10px;" id="teamBResult">0/20</div>
+                            <div style="font-size: 1.2em;" id="teamBPercentage">0%</div>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 30px;">
+                        <button class="btn btn-primary" onclick="resetPuzzle()" style="padding: 12px 30px; font-size: 1.1em;">Play Again</button>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -750,6 +992,21 @@
                 </div>
             </div>
         </div>
+        </div>
+
+        <!-- Team B Sidebar (Right) -->
+        <div class="teams-sidebar-right" id="teamsSidebarRight">
+            <div class="team-box teamB">
+                <h3>Team B</h3>
+                <div class="team-input-group">
+                    <input type="text" id="teamBInput" placeholder="Enter name" maxlength="20">
+                    <button id="addTeamBBtn" onclick="addTeamMember('B')">Add</button>
+                </div>
+                <div class="team-members-list" id="teamBList"></div>
+                <div class="team-count" id="teamBCount">0 / 10 members</div>
+                <div class="teams-locked-message" id="teamBLocked">Teams locked</div>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -772,10 +1029,127 @@
             logoStarted: false,
             puzzleCompleted: false,
             quizCompleted: false,
-            logoCompleted: false
+            logoCompleted: false,
+            teamsLocked: false
         };
 
-        // Switch between sections
+        // Teams state
+        let teamsState = {
+            teamA: [],
+            teamB: []
+        };
+
+        // ==================== TEAM MANAGEMENT ====================
+        function addTeamMember(team) {
+            if (gameState.teamsLocked) {
+                alert('Teams are locked! Finish the current round to modify teams.');
+                return;
+            }
+
+            const inputId = `team${team}Input`;
+            const input = document.getElementById(inputId);
+            const name = input.value.trim();
+
+            if (!name) {
+                alert('Please enter a player name');
+                return;
+            }
+
+            const teamArray = team === 'A' ? teamsState.teamA : teamsState.teamB;
+
+            if (teamArray.length >= 10) {
+                alert(`Team ${team} already has 10 members. Maximum reached!`);
+                return;
+            }
+
+            if (teamArray.includes(name)) {
+                alert(`${name} is already in Team ${team}`);
+                return;
+            }
+
+            teamArray.push(name);
+            input.value = '';
+            renderTeamMembers(team);
+        }
+
+        function removeTeamMember(team, index) {
+            if (gameState.teamsLocked) {
+                return;
+            }
+
+            const teamArray = team === 'A' ? teamsState.teamA : teamsState.teamB;
+            teamArray.splice(index, 1);
+            renderTeamMembers(team);
+        }
+
+        function renderTeamMembers(team) {
+            const listId = `team${team}List`;
+            const countId = `team${team}Count`;
+            const teamArray = team === 'A' ? teamsState.teamA : teamsState.teamB;
+            const listElement = document.getElementById(listId);
+
+            listElement.innerHTML = '';
+
+            teamArray.forEach((name, index) => {
+                const memberDiv = document.createElement('div');
+                memberDiv.className = `team-member-item team${team}`;
+                memberDiv.innerHTML = `
+                    <span class="team-member-name">${index + 1}. ${name}</span>
+                    <button class="team-member-remove" onclick="removeTeamMember('${team}', ${index})" ${gameState.teamsLocked ? 'disabled' : ''}>×</button>
+                `;
+                listElement.appendChild(memberDiv);
+            });
+
+            document.getElementById(countId).textContent = `${teamArray.length} / 10 members`;
+        }
+
+        function lockTeams() {
+            gameState.teamsLocked = true;
+            document.getElementById('teamAInput').disabled = true;
+            document.getElementById('teamBInput').disabled = true;
+            document.getElementById('addTeamABtn').disabled = true;
+            document.getElementById('addTeamBBtn').disabled = true;
+            document.getElementById('teamALocked').classList.add('show');
+            document.getElementById('teamBLocked').classList.add('show');
+
+            // Disable remove buttons
+            document.querySelectorAll('.team-member-remove').forEach(btn => btn.disabled = true);
+        }
+
+        function unlockTeams() {
+            gameState.teamsLocked = false;
+            document.getElementById('teamAInput').disabled = false;
+            document.getElementById('teamBInput').disabled = false;
+            document.getElementById('addTeamABtn').disabled = false;
+            document.getElementById('addTeamBBtn').disabled = false;
+            document.getElementById('teamALocked').classList.remove('show');
+            document.getElementById('teamBLocked').classList.remove('show');
+
+            // Enable remove buttons
+            document.querySelectorAll('.team-member-remove').forEach(btn => btn.disabled = false);
+        }
+
+        function getTeamAMembers() {
+            return teamsState.teamA;
+        }
+
+        function getTeamBMembers() {
+            return teamsState.teamB;
+        }
+
+        // ==================== TEAM MEMBER INPUT HANDLING ====================
+        document.addEventListener('DOMContentLoaded', function() {
+            // Allow Enter key to add team members
+            document.getElementById('teamAInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') addTeamMember('A');
+            });
+
+            document.getElementById('teamBInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') addTeamMember('B');
+            });
+        });
+
+        // ==================== SECTION SWITCHING ====================
         function switchSection(section) {
             gameState.currentSection = section;
             
@@ -806,208 +1180,494 @@
             {
                 question: "What is the capital of Australia?",
                 options: ["Sydney", "Melbourne", "Canberra", "Brisbane"],
-                correct: 2
+                correct: 2,
+                location: "Canberra, Australia"
             },
             {
                 question: "Which mountain is the highest in the world?",
                 options: ["K2", "Kangchenjunga", "Mount Everest", "Makalu"],
-                correct: 2
+                correct: 2,
+                location: "Mount Everest, Himalayas"
             },
             {
                 question: "What is the longest river in the world?",
                 options: ["Amazon", "Nile", "Yangtze", "Mississippi"],
-                correct: 1
+                correct: 1,
+                location: "Nile River, Africa"
             },
             {
                 question: "Which desert is the largest in the world?",
                 options: ["Sahara", "Arabian", "Gobi", "Antarctic"],
-                correct: 3
+                correct: 3,
+                location: "Antarctic Desert"
             },
             {
                 question: "What is the capital of Japan?",
                 options: ["Osaka", "Tokyo", "Kyoto", "Hiroshima"],
-                correct: 1
+                correct: 1,
+                location: "Tokyo, Japan"
             },
             // Hard questions
             {
                 question: "Which country has the most time zones?",
                 options: ["Russia", "France", "United States", "United Kingdom"],
-                correct: 1
+                correct: 1,
+                location: "France"
             },
             {
                 question: "What is the capital of Burkina Faso?",
                 options: ["Accra", "Ouagadougou", "Bamako", "Niamey"],
-                correct: 1
+                correct: 1,
+                location: "Ouagadougou, Burkina Faso"
             },
             {
                 question: "Which is the smallest country in the world by area?",
                 options: ["Monaco", "San Marino", "Vatican City", "Liechtenstein"],
-                correct: 2
+                correct: 2,
+                location: "Vatican City"
             },
             {
                 question: "What is the deepest point in the world's oceans?",
                 options: ["Mariana Trench", "Tonga Trench", "Philippine Trench", "Kuril-Kamchatka Trench"],
-                correct: 0
+                correct: 0,
+                location: "Mariana Trench"
             },
             {
                 question: "Which country is the largest landlocked country in the world?",
                 options: ["Kazakhstan", "Mongolia", "Afghanistan", "Bolivia"],
-                correct: 0
+                correct: 0,
+                location: "Kazakhstan"
             },
             {
                 question: "What is the capital of Djibouti?",
                 options: ["Djibouti City", "Tadjoura", "Arta", "Ali Adde"],
-                correct: 0
+                correct: 0,
+                location: "Djibouti City, Djibouti"
             },
             {
                 question: "Which mountain range is the longest in the world?",
                 options: ["Rocky Mountains", "Andes", "Himalayas", "Mid-Ocean Ridge System"],
-                correct: 3
+                correct: 3,
+                location: "Andes Mountains"
             },
             {
                 question: "What is the second-longest river in the world?",
                 options: ["Amazon", "Yangtze", "Nile", "Mississippi-Missouri"],
-                correct: 0
+                correct: 0,
+                location: "Amazon River"
             },
             {
                 question: "Which country has the most islands?",
                 options: ["Indonesia", "Philippines", "Sweden", "Norway"],
-                correct: 0
+                correct: 0,
+                location: "Indonesia"
             },
             {
                 question: "What is the capital of Equatorial Guinea?",
                 options: ["Malabo", "Bata", "Ebebiyin", "Mongomo"],
-                correct: 0
+                correct: 0,
+                location: "Malabo, Equatorial Guinea"
             },
             {
                 question: "Which is the hottest place on Earth?",
                 options: ["Death Valley", "Kebili Tunisia", "Dasht-e Lut", "Lut Desert"],
-                correct: 2
+                correct: 2,
+                location: "Dasht-e Lut, Iran"
             },
             {
                 question: "What is the capital of São Tomé and Príncipe?",
                 options: ["Santo António", "São Tomé", "Neves", "Água Grande"],
-                correct: 1
+                correct: 1,
+                location: "São Tomé, São Tomé and Príncipe"
             },
             {
                 question: "Which country is home to the Dead Sea?",
                 options: ["Jordan", "Israel", "Palestine", "All of the above"],
-                correct: 3
+                correct: 3,
+                location: "Dead Sea"
             },
             {
                 question: "What is the capital of Mauritius?",
                 options: ["Port Louis", "Beau Bassin-Rose Hill", "Vacoas-Phoenix", "Curepipe"],
-                correct: 0
+                correct: 0,
+                location: "Port Louis, Mauritius"
             },
             {
                 question: "Which is the southernmost capital city in the world?",
                 options: ["Christchurch", "Wellington", "Hobart", "Ushuaia"],
-                correct: 3
+                correct: 3,
+                location: "Ushuaia, Argentina"
             },
             {
                 question: "What is the capital of Seychelles?",
                 options: ["Mahe", "Victoria", "Praslin", "Silhouette"],
-                correct: 1
+                correct: 1,
+                location: "Victoria, Seychelles"
             },
             {
                 question: "Which country has more than 7,000 islands?",
                 options: ["Philippines", "Indonesia", "Micronesia", "Bahamas"],
-                correct: 1
+                correct: 1,
+                location: "Indonesia"
             },
             {
                 question: "What is the capital of Comoros?",
                 options: ["Moroni", "Mutsamudu", "Fomboni", "Ntsoudjini"],
-                correct: 0
+                correct: 0,
+                location: "Moroni, Comoros"
             },
             {
                 question: "Which mountain is the second-highest in the world?",
                 options: ["Kangchenjunga", "Lhotse", "Makalu", "K2"],
-                correct: 3
+                correct: 3,
+                location: "K2, Karakoram"
             },
             {
                 question: "What is the capital of Cabo Verde?",
                 options: ["Praia", "Tarrafal", "Santa Maria", "Ribeira Grande"],
-                correct: 0
+                correct: 0,
+                location: "Praia, Cabo Verde"
             },
             {
                 question: "Which country is home to the Atacama Desert?",
                 options: ["Peru", "Chile", "Argentina", "Bolivia"],
-                correct: 1
+                correct: 1,
+                location: "Atacama Desert, Chile"
             },
             {
                 question: "What is the capital of São Tomé and Príncipe?",
                 options: ["Santo António", "São Tomé", "Neves", "Trindade"],
-                correct: 1
+                correct: 1,
+                location: "São Tomé, São Tomé and Príncipe"
             },
             {
                 question: "Which is the wettest place on Earth?",
                 options: ["Cherrapunji", "Mawsynram", "Lloró", "Tutendo"],
-                correct: 1
+                correct: 1,
+                location: "Mawsynram, India"
             },
             {
                 question: "What is the capital of Mauritania?",
                 options: ["Nouakchott", "Atar", "Kaedi", "Rosso"],
-                correct: 0
+                correct: 0,
+                location: "Nouakchott, Mauritania"
             },
             {
                 question: "Which country is located on the Horn of Africa?",
                 options: ["Somalia", "Ethiopia", "Eritrea", "All of the above"],
-                correct: 3
+                correct: 3,
+                location: "Horn of Africa"
             },
             {
                 question: "What is the capital of Benin?",
                 options: ["Cotonou", "Porto-Novo", "Abomey", "Djougou"],
-                correct: 1
+                correct: 1,
+                location: "Porto-Novo, Benin"
             },
             {
                 question: "Which desert is the coldest in the world?",
                 options: ["Atacama", "Gobi", "Antarctic", "Arctic"],
-                correct: 2
+                correct: 2,
+                location: "Antarctic Desert"
             },
             {
                 question: "What is the capital of Gabon?",
                 options: ["Libreville", "Port-Gentil", "Franceville", "Oyem"],
-                correct: 0
+                correct: 0,
+                location: "Libreville, Gabon"
             },
             {
                 question: "Which country is the least densely populated in the world?",
                 options: ["Greenland", "Mongolia", "Mauritania", "Namibia"],
-                correct: 0
+                correct: 0,
+                location: "Greenland"
             },
             {
                 question: "What is the capital of Guinea-Bissau?",
                 options: ["Bissau", "Gabu", "Cacheu", "Bafata"],
-                correct: 0
+                correct: 0,
+                location: "Bissau, Guinea-Bissau"
             },
             {
                 question: "Which bay is the largest in the world?",
                 options: ["Hudson Bay", "Bengal Bay", "Mexico Bay", "Arabian Sea"],
-                correct: 0
+                correct: 0,
+                location: "Hudson Bay, Canada"
             },
             {
                 question: "What is the capital of Liberia?",
                 options: ["Monrovia", "Gbarnga", "Buchanan", "Kakata"],
-                correct: 0
+                correct: 0,
+                location: "Monrovia, Liberia"
             },
             {
                 question: "Which country has the Great Barrier Reef?",
                 options: ["New Zealand", "Australia", "Fiji", "Papua New Guinea"],
-                correct: 1
+                correct: 1,
+                location: "Great Barrier Reef, Australia"
             },
             {
                 question: "What is the capital of Sierra Leone?",
                 options: ["Freetown", "Kenema", "Makeni", "Bo"],
-                correct: 0
+                correct: 0,
+                location: "Freetown, Sierra Leone"
             },
             {
                 question: "Which is the only country in the world with four capital cities?",
                 options: ["South Africa", "Australia", "Brazil", "United States"],
-                correct: 0
+                correct: 0,
+                location: "South Africa"
             },
             {
                 question: "What is the capital of Togo?",
                 options: ["Lomé", "Sokodé", "Kpalimé", "Tsévié"],
-                correct: 0
+                correct: 0,
+                location: "Lomé, Togo"
+            }
+        ];
+
+        // Second set of 40 much harder geography questions
+        const geographyQuestionsRound2 = [
+            // Extremely difficult questions - Round 2
+            {
+                question: "Which country is home to the Valley of the Kings?",
+                options: ["Sudan", "Egypt", "Libya", "Algeria"],
+                correct: 1,
+                location: "Valley of the Kings, Egypt"
+            },
+            {
+                question: "What is the capital of Kyrgyzstan?",
+                options: ["Almaty", "Bishkek", "Osh", "Talas"],
+                correct: 1,
+                location: "Bishkek, Kyrgyzstan"
+            },
+            {
+                question: "Which is the highest waterfall in the world?",
+                options: ["Niagara Falls", "Victoria Falls", "Angel Falls", "Yosemite Falls"],
+                correct: 2,
+                location: "Angel Falls, Venezuela"
+            },
+            {
+                question: "What is the capital of Turkmenistan?",
+                options: ["Ashgabat", "Turkmenbashi", "Mary", "Balkanabat"],
+                correct: 0,
+                location: "Ashgabat, Turkmenistan"
+            },
+            {
+                question: "Which ocean is the largest by surface area?",
+                options: ["Atlantic Ocean", "Indian Ocean", "Pacific Ocean", "Arctic Ocean"],
+                correct: 2,
+                location: "Pacific Ocean"
+            },
+            {
+                question: "What is the capital of Tajikistan?",
+                options: ["Dushanbe", "Khujand", "Kulob", "Khorog"],
+                correct: 0,
+                location: "Dushanbe, Tajikistan"
+            },
+            {
+                question: "Which country is located on the Balkan Peninsula?",
+                options: ["Turkey", "Greece", "Romania", "All of the above"],
+                correct: 3,
+                location: "Balkans, Europe"
+            },
+            {
+                question: "What is the lowest point on Earth's land surface?",
+                options: ["Death Valley", "Dead Sea", "Turpan Depression", "Jericho"],
+                correct: 1,
+                location: "Dead Sea"
+            },
+            {
+                question: "Which mountain peak is the highest in Africa?",
+                options: ["Mount Kenya", "Mount Kilimanjaro", "Mount Stanley", "Ras Dashen"],
+                correct: 1,
+                location: "Mount Kilimanjaro, Tanzania"
+            },
+            {
+                question: "What is the capital of Uzbekistan?",
+                options: ["Samarkand", "Bukhara", "Tashkent", "Fergana"],
+                correct: 2,
+                location: "Tashkent, Uzbekistan"
+            },
+            {
+                question: "Which country was formerly known as Rhodesia?",
+                options: ["Zambia", "Zimbabwe", "Malawi", "Botswana"],
+                correct: 1,
+                location: "Zimbabwe"
+            },
+            {
+                question: "What is the capital of Kazakhstan?",
+                options: ["Almaty", "Astana", "Karaganda", "Shymkent"],
+                correct: 1,
+                location: "Astana, Kazakhstan"
+            },
+            {
+                question: "Which is the only country to have four deserts?",
+                options: ["Argentina", "Australia", "Mongolia", "Chile"],
+                correct: 1,
+                location: "Australia"
+            },
+            {
+                question: "What is the capital of Azerbaijan?",
+                options: ["Ganja", "Baku", "Shaki", "Lahij"],
+                correct: 1,
+                location: "Baku, Azerbaijan"
+            },
+            {
+                question: "Which country spans both Europe and Asia?",
+                options: ["Russia", "Turkey", "Georgia", "Kazakhstan"],
+                correct: 0,
+                location: "Russia"
+            },
+            {
+                question: "What is the capital of Moldova?",
+                options: ["Tiraspol", "Chisinau", "Balti", "Cahul"],
+                correct: 1,
+                location: "Chisinau, Moldova"
+            },
+            {
+                question: "Which island nation is home to lemurs?",
+                options: ["Mauritius", "Seychelles", "Madagascar", "Comoros"],
+                correct: 2,
+                location: "Madagascar"
+            },
+            {
+                question: "What is the capital of Montenegro?",
+                options: ["Podgorica", "Cetinje", "Kotor", "Budva"],
+                correct: 0,
+                location: "Podgorica, Montenegro"
+            },
+            {
+                question: "Which sea has the highest salinity on Earth?",
+                options: ["Red Sea", "Dead Sea", "Caspian Sea", "Great Salt Lake"],
+                correct: 1,
+                location: "Dead Sea"
+            },
+            {
+                question: "What is the capital of Bosnia and Herzegovina?",
+                options: ["Sarajevo", "Banja Luka", "Mostar", "Zenica"],
+                correct: 0,
+                location: "Sarajevo, Bosnia and Herzegovina"
+            },
+            {
+                question: "Which country is the world's largest by area?",
+                options: ["Canada", "United States", "China", "Russia"],
+                correct: 3,
+                location: "Russia"
+            },
+            {
+                question: "What is the capital of Kosovo?",
+                options: ["Pristina", "Prizren", "Gjakova", "Ferizaj"],
+                correct: 0,
+                location: "Pristina, Kosovo"
+            },
+            {
+                question: "Which plateau is the highest in the world?",
+                options: ["Colorado Plateau", "Tibetan Plateau", "Altai Plateau", "Patagonian Steppe"],
+                correct: 1,
+                location: "Tibetan Plateau"
+            },
+            {
+                question: "What is the capital of North Macedonia?",
+                options: ["Skopje", "Bitola", "Kumanovo", "Tetovo"],
+                correct: 0,
+                location: "Skopje, North Macedonia"
+            },
+            {
+                question: "Which country has the most volcanoes?",
+                options: ["Philippines", "Indonesia", "Japan", "Chile"],
+                correct: 1,
+                location: "Indonesia"
+            },
+            {
+                question: "What is the capital of Albania?",
+                options: ["Tirana", "Durres", "Vlore", "Shkoder"],
+                correct: 0,
+                location: "Tirana, Albania"
+            },
+            {
+                question: "Which strait separates Spain and Morocco?",
+                options: ["English Channel", "Strait of Gibraltar", "Strait of Hormuz", "Bering Strait"],
+                correct: 1,
+                location: "Strait of Gibraltar"
+            },
+            {
+                question: "What is the capital of Serbia?",
+                options: ["Nis", "Zemun", "Novi Sad", "Belgrade"],
+                correct: 3,
+                location: "Belgrade, Serbia"
+            },
+            {
+                question: "Which desert is the driest place on Earth?",
+                options: ["Sahara", "Kalahari", "Atacama", "Gobi"],
+                correct: 2,
+                location: "Atacama Desert, Chile"
+            },
+            {
+                question: "What is the capital of Croatia?",
+                options: ["Split", "Zadar", "Zagreb", "Dubrovnik"],
+                correct: 2,
+                location: "Zagreb, Croatia"
+            },
+            {
+                question: "Which mountain range is home to the Khyber Pass?",
+                options: ["Karakoram", "Hindu Kush", "Himalayas", "Pamir"],
+                correct: 1,
+                location: "Hindu Kush Mountains"
+            },
+            {
+                question: "What is the capital of Slovenia?",
+                options: ["Ljubljana", "Maribor", "Celje", "Koper"],
+                correct: 0,
+                location: "Ljubljana, Slovenia"
+            },
+            {
+                question: "Which country has the most lakes?",
+                options: ["Sweden", "Canada", "Russia", "Finland"],
+                correct: 1,
+                location: "Canada"
+            },
+            {
+                question: "What is the capital of Slovakia?",
+                options: ["Bratislava", "Kosice", "Presov", "Zilina"],
+                correct: 0,
+                location: "Bratislava, Slovakia"
+            },
+            {
+                question: "Which gulf is the largest in the world?",
+                options: ["Gulf of Mexico", "Persian Gulf", "Gulf of Bengal", "Gulf of Guinea"],
+                correct: 2,
+                location: "Gulf of Bengal"
+            },
+            {
+                question: "What is the capital of Czech Republic?",
+                options: ["Brno", "Ostrava", "Prague", "Plzen"],
+                correct: 2,
+                location: "Prague, Czech Republic"
+            },
+            {
+                question: "Which country is the only one with a non-rectangular flag?",
+                options: ["Nepal", "Switzerland", "Iceland", "Malta"],
+                correct: 0,
+                location: "Nepal"
+            },
+            {
+                question: "What is the capital of Hungary?",
+                options: ["Debrecen", "Budapest", "Szeged", "Miskolc"],
+                correct: 1,
+                location: "Budapest, Hungary"
+            },
+            {
+                question: "Which reef system is the second largest in the world?",
+                options: ["Belize Barrier Reef", "Mesoamerican Reef", "Bunaken Reef", "Palau Reef"],
+                correct: 1,
+                location: "Mesoamerican Reef"
+            },
+            {
+                question: "What is the capital of Romania?",
+                options: ["Constanta", "Braila", "Bucharest", "Iasi"],
+                correct: 2,
+                location: "Bucharest, Romania"
             }
         ];
 
@@ -1017,7 +1677,13 @@
             answered: new Array(40).fill(false),
             submitted: false,
             questionTimer: 20,
-            timerInterval: null
+            timerInterval: null,
+            teamAScore: 0,
+            teamBScore: 0,
+            totalTeamAQuestions: 20,
+            totalTeamBQuestions: 20,
+            round: 1,
+            currentQuestionSet: geographyQuestions
         };
 
         function initializePuzzle() {
@@ -1027,6 +1693,7 @@
         }
 
         function startGeographyQuiz() {
+            lockTeams();
             document.getElementById('geoStartScreen').style.display = 'none';
             document.getElementById('geoQuizContent').style.display = 'block';
             loadGeoQuestion(0);
@@ -1034,14 +1701,35 @@
 
         function loadGeoQuestion(index) {
             geoState.currentQuestion = index;
-            const question = geographyQuestions[index];
+            const question = geoState.currentQuestionSet[index];
+            
+            // Determine which team this question is for (even index = Team A, odd = Team B)
+            const isTeamA = index % 2 === 0;
+            const teamLabel = isTeamA ? 'Team A' : 'Team B';
+            const teamColor = isTeamA ? '#667eea' : '#f5576c';
 
             document.getElementById('geoQuestion').textContent = question.question;
             document.getElementById('optionA').textContent = question.options[0];
             document.getElementById('optionB').textContent = question.options[1];
             document.getElementById('optionC').textContent = question.options[2];
             document.getElementById('optionD').textContent = question.options[3];
-            document.getElementById('geoCount').textContent = `Question ${index + 1} of ${geographyQuestions.length}`;
+            
+            // Show round and question count
+            const totalQuestions = 40;
+            const roundLabel = geoState.round === 1 ? 'Round 1' : 'Round 2';
+            document.getElementById('geoCount').textContent = `${roundLabel} - Question ${index + 1} of ${totalQuestions}`;
+            
+            // Update team indicator
+            const indicator = document.getElementById('teamIndicator');
+            indicator.textContent = teamLabel;
+            indicator.style.background = teamColor;
+
+            // Load location image
+            if (question.location) {
+                loadLocationImage(question.location);
+            } else {
+                document.getElementById('geoLocationImage').innerHTML = '📍 Geographic Location';
+            }
 
             // Reset button states
             document.querySelectorAll('.geo-option-btn').forEach(btn => {
@@ -1050,7 +1738,7 @@
             });
 
             // Update progress
-            const progress = ((index + 1) / geographyQuestions.length) * 100;
+            const progress = ((index + 1) / 40) * 100;
             document.getElementById('geoProgress').style.width = progress + '%';
 
             // Start timer for this question if not already answered
@@ -1079,13 +1767,37 @@
 
             // Update navigation buttons
             document.getElementById('prevGeoBtn').disabled = index === 0;
-            if (index === geographyQuestions.length - 1) {
+            if (index === 39) {
                 document.getElementById('nextGeoBtn').style.display = 'none';
                 document.getElementById('submitGeoBtn').style.display = 'block';
             } else {
                 document.getElementById('nextGeoBtn').style.display = 'block';
                 document.getElementById('submitGeoBtn').style.display = 'none';
             }
+        }
+
+        function loadLocationImage(location) {
+            const imageElement = document.getElementById('geoLocationImage');
+            imageElement.innerHTML = '';
+            imageElement.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+            
+            // Use Unsplash API for free images
+            const searchQuery = encodeURIComponent(location);
+            const imageUrl = `https://source.unsplash.com/600x300/?${searchQuery},geography,landmark`;
+            
+            const img = new Image();
+            img.onload = function() {
+                imageElement.style.backgroundImage = `url('${imageUrl}')`;
+                imageElement.style.backgroundSize = 'cover';
+                imageElement.style.backgroundPosition = 'center';
+                imageElement.textContent = '';
+            };
+            img.onerror = function() {
+                // Fallback - just show gradient background, no text
+                imageElement.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                imageElement.textContent = '';
+            };
+            img.src = imageUrl;
         }
 
         function startQuestionTimer() {
@@ -1132,7 +1844,7 @@
             }
             document.getElementById('questionTimer').textContent = '-';
 
-            const question = geographyQuestions[geoState.currentQuestion];
+            const question = geoState.currentQuestionSet[geoState.currentQuestion];
             const buttons = document.querySelectorAll('.geo-option-btn');
 
             geoState.answers[geoState.currentQuestion] = optionIndex;
@@ -1151,7 +1863,7 @@
 
             // Check if all questions are answered
             const allAnswered = geoState.answered.every(a => a);
-            if (allAnswered && geoState.currentQuestion === geographyQuestions.length - 1) {
+            if (allAnswered && geoState.currentQuestion === 39) {
                 document.getElementById('submitGeoBtn').style.display = 'block';
                 document.getElementById('nextGeoBtn').style.display = 'none';
             }
@@ -1170,13 +1882,89 @@
         }
 
         function submitGeography() {
-            const correct = geoState.answers.filter((answer, index) => answer === geographyQuestions[index].correct).length;
-            alert(`🎉 Quiz Complete! You got ${correct}/${geographyQuestions.length} correct!`);
-            geoState.submitted = true;
-            document.getElementById('puzzleSubmissionStatus').textContent = 'Geography Quiz completed! Ready to submit';
-            document.getElementById('puzzleSubmissionStatus').className = 'submission-status success';
-            document.getElementById('puzzleSubmitBtn').disabled = false;
-            document.getElementById('puzzleSubmission').classList.add('active');
+            // Calculate scores for current round
+            let round1TeamAScore = 0, round1TeamBScore = 0;
+            let round2TeamAScore = 0, round2TeamBScore = 0;
+
+            geoState.currentQuestionSet.forEach((question, index) => {
+                const isCorrect = geoState.answers[index] === question.correct;
+                if (geoState.round === 1) {
+                    if (index % 2 === 0) {
+                        if (isCorrect) round1TeamAScore++;
+                    } else {
+                        if (isCorrect) round1TeamBScore++;
+                    }
+                } else {
+                    if (index % 2 === 0) {
+                        if (isCorrect) round2TeamAScore++;
+                    } else {
+                        if (isCorrect) round2TeamBScore++;
+                    }
+                }
+            });
+
+            if (geoState.round === 1) {
+                // Save round 1 scores and prepare for round 2
+                geoState.round1TeamAScore = round1TeamAScore;
+                geoState.round1TeamBScore = round1TeamBScore;
+                geoState.round1Answers = [...geoState.answers];
+                
+                // Reset for round 2
+                geoState.round = 2;
+                geoState.currentQuestion = 0;
+                geoState.answers = new Array(40).fill(-1);
+                geoState.answered = new Array(40).fill(false);
+                geoState.currentQuestionSet = geographyQuestionsRound2;
+                
+                // Show start screen for round 2
+                document.getElementById('geoQuizContent').style.display = 'none';
+                document.getElementById('geoStartScreen').style.display = 'block';
+                document.getElementById('geoStartScreen').innerHTML = `
+                    <div style="text-align: center; padding: 60px 20px;">
+                        <h2 style="font-size: 2.5em; margin-bottom: 20px; color: #333;">Round 1 Complete! 🎉</h2>
+                        <p style="font-size: 1.2em; color: #666; margin-bottom: 30px;">You completed 40 challenging questions!</p>
+                        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; border-radius: 8px; margin: 30px 0; max-width: 500px; margin-left: auto; margin-right: auto;">
+                            <h3 style="margin-bottom: 15px;">Round 1 Results</h3>
+                            <p style="font-size: 1.1em; margin: 10px 0;"><strong>Team A: ${round1TeamAScore}/20</strong></p>
+                            <p style="font-size: 1.1em; margin: 10px 0;"><strong>Team B: ${round1TeamBScore}/20</strong></p>
+                        </div>
+                        <p style="font-size: 1.1em; color: #333; margin-bottom: 30px;"><strong>Now it's time for Round 2 - Even Tougher Questions!</strong></p>
+                        <button class="btn btn-primary" onclick="startGeographyQuiz()" style="font-size: 1.1em; padding: 15px 40px;">Start Round 2</button>
+                    </div>
+                `;
+            } else {
+                // Round 2 is complete - show final results
+                geoState.round2TeamAScore = round2TeamAScore;
+                geoState.round2TeamBScore = round2TeamBScore;
+                geoState.submitted = true;
+
+                // Hide quiz content and show final results
+                document.getElementById('geoQuizContent').style.display = 'none';
+                document.getElementById('geoResultsDisplay').style.display = 'block';
+
+                // Calculate totals
+                const totalTeamA = geoState.round1TeamAScore + geoState.round2TeamAScore;
+                const totalTeamB = geoState.round1TeamBScore + geoState.round2TeamBScore;
+                const teamAPercentage = Math.round((totalTeamA / 40) * 100);
+                const teamBPercentage = Math.round((totalTeamB / 40) * 100);
+
+                document.getElementById('teamAResult').innerHTML = `
+                    <div>Round 1: ${geoState.round1TeamAScore}/20</div>
+                    <div>Round 2: ${geoState.round2TeamAScore}/20</div>
+                    <div style="margin-top: 10px; padding-top: 10px; border-top: 2px solid rgba(255,255,255,0.3); font-size: 1.3em;"><strong>Total: ${totalTeamA}/40</strong></div>
+                `;
+                document.getElementById('teamBResult').innerHTML = `
+                    <div>Round 1: ${geoState.round1TeamBScore}/20</div>
+                    <div>Round 2: ${geoState.round2TeamBScore}/20</div>
+                    <div style="margin-top: 10px; padding-top: 10px; border-top: 2px solid rgba(255,255,255,0.3); font-size: 1.3em;"><strong>Total: ${totalTeamB}/40</strong></div>
+                `;
+                document.getElementById('teamAPercentage').textContent = `${teamAPercentage}%`;
+                document.getElementById('teamBPercentage').textContent = `${teamBPercentage}%`;
+
+                document.getElementById('puzzleSubmissionStatus').textContent = 'Geography Quiz (2 Rounds) completed! Results displayed above.';
+                document.getElementById('puzzleSubmissionStatus').className = 'submission-status success';
+                document.getElementById('puzzleSubmitBtn').disabled = false;
+            }
         }
 
         function startPuzzleTimer() {
@@ -1224,10 +2012,45 @@
         function resetPuzzle() {
             if (gameState.puzzleTimerInterval) clearInterval(gameState.puzzleTimerInterval);
             gameState.puzzleCompleted = false;
+            
+            // Reset geo state completely
+            geoState.currentQuestion = 0;
+            geoState.answers = new Array(40).fill(-1);
+            geoState.answered = new Array(40).fill(false);
+            geoState.submitted = false;
+            geoState.round = 1;
+            geoState.currentQuestionSet = geographyQuestions;
+            geoState.teamAScore = 0;
+            geoState.teamBScore = 0;
+            geoState.round1TeamAScore = 0;
+            geoState.round1TeamBScore = 0;
+            geoState.round2TeamAScore = 0;
+            geoState.round2TeamBScore = 0;
+            
             document.getElementById('puzzleSubmitBtn').disabled = true;
-            document.getElementById('puzzleSubmissionStatus').textContent = 'Complete the puzzle to submit';
+            document.getElementById('puzzleSubmissionStatus').textContent = 'Complete all questions to submit';
             document.getElementById('puzzleSubmissionStatus').className = 'submission-status waiting';
             document.getElementById('puzzleSubmission').classList.remove('active');
+            
+            // Hide results and show start screen
+            document.getElementById('geoResultsDisplay').style.display = 'none';
+            document.getElementById('geoStartScreen').style.display = 'block';
+            document.getElementById('geoStartScreen').innerHTML = `
+                <div style="text-align: center; padding: 60px 20px;">
+                    <h2 style="font-size: 2.5em; margin-bottom: 20px; color: #333;">Geography Quizzes</h2>
+                    <p style="font-size: 1.2em; color: #666; margin-bottom: 30px;">Challenge yourself with 80 geography questions across 2 rounds</p>
+                    <div style="background: #f0f4ff; padding: 30px; border-radius: 8px; margin: 30px 0; max-width: 500px; margin-left: auto; margin-right: auto;">
+                        <p style="font-size: 1.1em; margin: 10px 0;"><strong>📝 40 Questions (Round 1)</strong></p>
+                        <p style="font-size: 1.1em; margin: 10px 0;"><strong>🔥 40 Harder Questions (Round 2)</strong></p>
+                        <p style="font-size: 1.1em; margin: 10px 0;"><strong>⏱️ 20 Seconds per Question</strong></p>
+                        <p style="font-size: 1.1em; margin: 10px 0;"><strong>🌍 Various Difficulty Levels</strong></p>
+                    </div>
+                    <button class="btn btn-primary" onclick="startGeographyQuiz()" style="font-size: 1.1em; padding: 15px 40px; margin-top: 30px;">Start Geography Quiz</button>
+                </div>
+            `;
+            document.getElementById('geoQuizContent').style.display = 'none';
+            
+            unlockTeams();
             initializePuzzle();
         }
 
@@ -1346,6 +2169,7 @@
         }
 
         function startQuiz() {
+            lockTeams();
             updateQuizData(); // Ensure latest data is captured
 
             const validQuestions = gameState.quizData.filter(q => 
@@ -1354,6 +2178,7 @@
 
             if (validQuestions.length === 0) {
                 alert('Please add at least one complete question first!');
+                unlockTeams();
                 return;
             }
 
@@ -1452,6 +2277,7 @@
             document.getElementById('quizScoreDisplay').style.display = 'none';
             gameState.quizStarted = false;
             gameState.quizCompleted = false;
+            unlockTeams();
 
             if (gameState.quizTimerInterval) clearInterval(gameState.quizTimerInterval);
         }
@@ -1463,6 +2289,7 @@
             gameState.quizAnswers = [];
             gameState.quizStarted = false;
             gameState.quizCompleted = false;
+            unlockTeams();
             updateQuizSetupStatus();
         }
 
@@ -1609,6 +2436,7 @@
         }
 
         function startLogoQuiz() {
+            lockTeams();
             updateLogoQuizData();
 
             const validQuestions = gameState.logoQuizData.filter(q => 
@@ -1617,6 +2445,7 @@
 
             if (validQuestions.length === 0) {
                 alert('Please add at least one complete question first!');
+                unlockTeams();
                 return;
             }
 
@@ -1712,6 +2541,7 @@
             document.getElementById('logoScoreDisplay').style.display = 'none';
             gameState.logoStarted = false;
             gameState.logoCompleted = false;
+            unlockTeams();
 
             if (gameState.logoTimerInterval) clearInterval(gameState.logoTimerInterval);
         }
@@ -1723,6 +2553,7 @@
             gameState.logoQuizAnswers = [];
             gameState.logoStarted = false;
             gameState.logoCompleted = false;
+            unlockTeams();
             updateLogoQuizSetupStatus();
         }
 
