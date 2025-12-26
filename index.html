@@ -763,7 +763,10 @@
         <!-- Main Content -->
         <div class="main-content">
             <div class="header">
-                <h1>RITUAL</h1>
+                <div style="display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 15px;">
+                    <img src="images/RITUAL LOGO.jpeg" alt="RITUAL Logo" style="height: 80px; width: auto; opacity: 0.7; filter: brightness(1.1);">
+                    <h1>RITUAL</h1>
+                </div>
                 <p>Games & Challenges</p>
             </div>
 
@@ -2153,12 +2156,12 @@
             const status = document.getElementById('quizSetupStatus');
             const startBtn = document.getElementById('startQuizBtn');
 
-            if (validQuestions > 0) {
-                status.textContent = `${validQuestions} valid question(s) ready. Click Start Quiz to begin!`;
+            if (validQuestions >= 10) {
+                status.textContent = `${validQuestions} question(s) ready. Click Start Quiz to begin!`;
                 status.className = 'submission-status success';
                 startBtn.disabled = false;
             } else {
-                status.textContent = 'Add at least one complete question to start';
+                status.textContent = `Add ${10 - validQuestions} more question(s) to start (${validQuestions}/10)`;
                 status.className = 'submission-status waiting';
                 startBtn.disabled = true;
             }
@@ -2187,6 +2190,7 @@
             gameState.quizAnswers = new Array(gameState.quizData.length).fill(-1);
             gameState.quizStarted = true;
             gameState.quizCompleted = false;
+            gameState.quizCurrentQuestion = 0;
 
             // Hide setup, show questions
             document.getElementById('quizSetup').style.display = 'none';
@@ -2195,31 +2199,86 @@
 
             renderQuizQuestions();
 
-            // Start timer
+            // Start timer for first question
             if (gameState.quizTimerInterval) clearInterval(gameState.quizTimerInterval);
-            startQuizTimer();
+            startQuestionTimer();
         }
 
         function renderQuizQuestions() {
             const container = document.getElementById('questionsDisplay');
             container.innerHTML = '';
 
-            gameState.quizData.forEach((q, index) => {
-                const questionCard = document.createElement('div');
-                questionCard.className = 'question-card';
-                questionCard.innerHTML = `
-                    <h3>Question ${index + 1}: ${q.question}</h3>
-                    <div class="options">
-                        ${q.options.map((option, optIndex) => `
-                            <label class="option" onclick="selectQuizAnswer(${index}, ${optIndex})">
-                                <input type="radio" name="question-${index}" value="${optIndex}">
-                                ${option}
-                            </label>
-                        `).join('')}
+            // Initialize current question index if not already set
+            if (!gameState.hasOwnProperty('quizCurrentQuestion')) {
+                gameState.quizCurrentQuestion = 0;
+            }
+
+            const currentQuestion = gameState.quizData[gameState.quizCurrentQuestion];
+            const index = gameState.quizCurrentQuestion;
+
+            // Determine team (even index = Team A, odd = Team B)
+            const isTeamA = index % 2 === 0;
+            const teamLabel = isTeamA ? 'Team A' : 'Team B';
+            const teamColor = isTeamA ? '#667eea' : '#f5576c';
+
+            const questionCard = document.createElement('div');
+            questionCard.className = 'question-card';
+            questionCard.innerHTML = `
+                <div style="margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
+                    <div style="font-size: 0.9em; color: #666;">
+                        Question ${index + 1} of ${gameState.quizData.length}
                     </div>
-                `;
-                container.appendChild(questionCard);
-            });
+                    <div style="background: ${teamColor}; color: white; padding: 5px 12px; border-radius: 4px; font-weight: bold; font-size: 0.9em;">
+                        ${teamLabel}
+                    </div>
+                </div>
+                <h3>${currentQuestion.question}</h3>
+                <div class="options">
+                    ${currentQuestion.options.map((option, optIndex) => `
+                        <label class="option" onclick="selectQuizAnswer(${index}, ${optIndex})" ${
+                            gameState.quizAnswers[index] === optIndex ? 'style="background: #e8f5e9;"' : ''
+                        }>
+                            <input type="radio" name="question-${index}" value="${optIndex}" ${
+                                gameState.quizAnswers[index] === optIndex ? 'checked' : ''
+                            }>
+                            ${option}
+                        </label>
+                    `).join('')}
+                </div>
+                <div style="margin-top: 20px; display: flex; gap: 10px;">
+                    <button class="btn btn-secondary" onclick="prevQuizQuestion()" ${
+                        index === 0 ? 'disabled' : ''
+                    }>Previous</button>
+                    <button class="btn btn-secondary" onclick="nextQuizQuestion()" ${
+                        index === gameState.quizData.length - 1 ? 'disabled' : ''
+                    }>Next</button>
+                    ${index === gameState.quizData.length - 1 ? 
+                        '<button class="btn btn-success" onclick="finishQuiz()">Submit Quiz</button>' : ''}
+                </div>
+            `;
+            container.appendChild(questionCard);
+        }
+
+        function nextQuizQuestion() {
+            if (gameState.quizCurrentQuestion < gameState.quizData.length - 1) {
+                gameState.quizCurrentQuestion++;
+                renderQuizQuestions();
+                
+                // Restart timer for new question
+                if (gameState.quizTimerInterval) clearInterval(gameState.quizTimerInterval);
+                startQuestionTimer();
+            }
+        }
+
+        function prevQuizQuestion() {
+            if (gameState.quizCurrentQuestion > 0) {
+                gameState.quizCurrentQuestion--;
+                renderQuizQuestions();
+                
+                // Restart timer
+                if (gameState.quizTimerInterval) clearInterval(gameState.quizTimerInterval);
+                startQuestionTimer();
+            }
         }
 
         function selectQuizAnswer(questionIndex, optionIndex) {
@@ -2295,7 +2354,16 @@
         }
 
         function startQuizTimer() {
-            gameState.quizTime = 600;
+            // Start per-question timer (20 seconds per question)
+            startQuestionTimer();
+        }
+
+        function startQuestionTimer() {
+            if (gameState.quizTimerInterval) {
+                clearInterval(gameState.quizTimerInterval);
+            }
+
+            gameState.quizTime = 20;
             updateQuizTimerDisplay();
 
             gameState.quizTimerInterval = setInterval(() => {
@@ -2304,21 +2372,20 @@
 
                 if (gameState.quizTime <= 0) {
                     clearInterval(gameState.quizTimerInterval);
-                    alert('Time\'s up! Quiz session ended.');
-                    finishQuiz();
+                    // Move to next question automatically
+                    nextQuizQuestion();
                 }
             }, 1000);
         }
 
         function updateQuizTimerDisplay() {
-            const minutes = Math.floor(gameState.quizTime / 60);
-            const seconds = gameState.quizTime % 60;
+            const seconds = gameState.quizTime;
             const timerElement = document.getElementById('quizTimer');
-            timerElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            timerElement.textContent = `${seconds}s`;
 
-            if (gameState.quizTime <= 60) {
+            if (gameState.quizTime <= 5) {
                 timerElement.classList.add('danger');
-            } else if (gameState.quizTime <= 180) {
+            } else if (gameState.quizTime <= 10) {
                 timerElement.classList.add('warning');
             }
         }
