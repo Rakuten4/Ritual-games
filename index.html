@@ -13,7 +13,7 @@
 
         body {
             font-family: 'Arial', sans-serif;
-            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('images/RITUAL LOGO.jpeg');
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('images/mask.jpeg');
             background-size: cover;
             background-attachment: fixed;
             background-position: center;
@@ -363,8 +363,9 @@
             font-size: 1.5em;
             font-weight: bold;
             margin-bottom: 20px;
-            background-size: cover;
+            background-size: contain;
             background-position: center;
+            background-repeat: no-repeat;
             position: relative;
             overflow: hidden;
         }
@@ -1726,7 +1727,7 @@
 
             // Load location image
             if (question.location) {
-                loadLocationImage(question.location);
+                loadLocationImage(isTeamA);
             } else {
                 document.getElementById('geoLocationImage').innerHTML = '📍 Geographic Location';
             }
@@ -1776,20 +1777,20 @@
             }
         }
 
-        function loadLocationImage(location) {
+        function loadLocationImage(isTeamA) {
             const imageElement = document.getElementById('geoLocationImage');
             imageElement.innerHTML = '';
             imageElement.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
             
-            // Use Unsplash API for free images
-            const searchQuery = encodeURIComponent(location);
-            const imageUrl = `https://source.unsplash.com/600x300/?${searchQuery},geography,landmark`;
+            // Use team-specific images
+            const imageUrl = isTeamA ? 'images/segun.jpeg' : 'images/cat siggy.jpeg';
             
             const img = new Image();
             img.onload = function() {
                 imageElement.style.backgroundImage = `url('${imageUrl}')`;
-                imageElement.style.backgroundSize = 'cover';
+                imageElement.style.backgroundSize = 'contain';
                 imageElement.style.backgroundPosition = 'center';
+                imageElement.style.backgroundRepeat = 'no-repeat';
                 imageElement.textContent = '';
             };
             img.onerror = function() {
