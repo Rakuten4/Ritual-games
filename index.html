@@ -773,7 +773,7 @@
             <div class="section-selector">
             <button class="section-btn active" onclick="switchSection('puzzle')">Geography Quizzes</button>
             <button class="section-btn" onclick="switchSection('quiz')">Quiz Time</button>
-            <button class="section-btn" onclick="switchSection('logo')">Logo Quizzes</button>
+            <button class="section-btn" onclick="switchSection('logo')">Tough Riddles</button>
         </div>
 
         <!-- Geography Quizzes Section -->
@@ -938,59 +938,40 @@
             </div>
         </div>
 
-        <!-- Logo Quizzes Section -->
+        <!-- Tough Riddles Section -->
         <div id="logo" class="content">
             <div class="timer-section">
-                <h2>Logo Quizzes</h2>
+                <h2>Tough Riddles</h2>
                 <div class="timer" id="logoTimer">10:00</div>
             </div>
 
-            <!-- Logo Quiz Start Screen -->
+            <!-- Riddles Start Screen -->
             <div id="logoStartScreen" style="text-align: center; padding: 60px 20px;">
-                <h2 style="font-size: 2.5em; margin-bottom: 20px; color: #333;">Logo Quizzes</h2>
-                <p style="font-size: 1.2em; color: #666; margin-bottom: 30px;">Create and take your own logo identification quiz</p>
-                <div style="background: #f0f4ff; padding: 30px; border-radius: 8px; margin: 30px 0; max-width: 500px; margin-left: auto; margin-right: auto;">
-                    <p style="font-size: 1.1em; margin: 10px 0;"><strong>🏢 Logo Questions</strong></p>
-                    <p style="font-size: 1.1em; margin: 10px 0;"><strong>🎯 Multiple Choice Options</strong></p>
-                    <p style="font-size: 1.1em; margin: 10px 0;"><strong>⏱️ 10 Minute Timer</strong></p>
+                <h2 style="font-size: 2.5em; margin-bottom: 20px; color: #333;">Tough Riddles</h2>
+                <p style="font-size: 1.2em; color: #666; margin-bottom: 30px;">Two rounds — 20 tough riddles per round. Alternate teams per question.</p>
+                <div style="background: #f0f4ff; padding: 30px; border-radius: 8px; margin: 30px 0; max-width: 600px; margin-left: auto; margin-right: auto;">
+                    <p style="font-size: 1.1em; margin: 10px 0;"><strong>🧩 2 Rounds</strong></p>
+                    <p style="font-size: 1.1em; margin: 10px 0;"><strong>❓ 20 Tough Riddles per Round</strong></p>
+                    <p style="font-size: 1.1em; margin: 10px 0;"><strong>⏱️ 30 Seconds per Riddle</strong></p>
                 </div>
-                <button class="btn btn-primary" onclick="showLogoSetup()" style="font-size: 1.1em; padding: 15px 40px; margin-top: 30px;">Start Logo Quizzes</button>
+                <button class="btn btn-primary" onclick="startRiddles()" style="font-size: 1.1em; padding: 15px 40px; margin-top: 30px;">Start Round 1</button>
             </div>
 
-            <!-- Logo Quiz Setup Area -->
-            <div id="logoSetup" style="display: none;">
-                <div class="quiz-setup">
-                    <h3>Create Your Logo Quiz</h3>
-                    <div class="btn-group">
-                        <button class="btn btn-primary" onclick="addLogoQuestionInput()">+ Add Logo Question</button>
-                        <button class="btn btn-success" id="startLogoQuizBtn" onclick="startLogoQuiz()" disabled>Start Logo Quiz</button>
-                        <button class="btn btn-secondary" onclick="resetLogoQuiz()">Reset All</button>
-                    </div>
-
-                    <div id="logoQuestionsContainer"></div>
-                </div>
-
-                <div class="submission-area">
-                    <p class="submission-status waiting" id="logoSetupStatus">Add at least one question to start</p>
-                </div>
-            </div>
-
-            <!-- Logo Quiz Display Area -->
+            <!-- Riddles Display Area -->
             <div id="logoDisplay" class="quiz-display">
                 <div id="logoQuestionsDisplay"></div>
                 <div class="btn-group" style="justify-content: center;">
-                    <button class="btn btn-primary" onclick="finishLogoQuiz()">Finish Quiz</button>
-                    <button class="btn btn-secondary" onclick="resetLogoQuizDisplay()">Back to Setup</button>
+                    <button class="btn btn-primary" onclick="submitRiddles()">Submit Round</button>
+                    <button class="btn btn-secondary" onclick="resetRiddlesDisplay()">Back to Start</button>
                 </div>
 
                 <div id="logoScoreDisplay" style="display: none;">
                     <div class="quiz-score">
-                        <h3>Logo Quiz Completed!</h3>
-                        <p id="logoScoreText">Your Score: 0/0</p>
+                        <h3>Tough Riddles Complete!</h3>
+                        <p id="logoScoreText">Results will appear here</p>
                         <div class="submission-area active">
-                            <p class="submission-status completed">Results saved and ready to submit</p>
-                            <button class="btn btn-primary" onclick="submitLogoQuiz()">Submit Logo Quiz Results</button>
-                            <button class="btn btn-secondary" onclick="resetLogoQuizDisplay()" style="margin-top: 10px;">Take Another Quiz</button>
+                            <p class="submission-status completed">Round complete</p>
+                            <button class="btn btn-primary" onclick="resetRiddlesDisplay()">Play Again</button>
                         </div>
                     </div>
                 </div>
@@ -2390,239 +2371,245 @@
             }
         }
 
-        // ==================== LOGO QUIZ LOGIC ====================
-        function addLogoQuestionInput() {
-            const container = document.getElementById('logoQuestionsContainer');
-            const questionIndex = gameState.logoQuizData.length;
+        // ==================== TOUGH RIDDLES LOGIC (2 rounds, 20 each) ====================
+        const riddlesRound1 = [
+            {question: "I am taken from a mine and shut up in a wooden case, from which I am never released, and yet I am used by almost everybody. What am I?", options: ["Coal","Pencil lead","Diamond","Gold"], correct: 1},
+            {question: "Alive without breath, as cold as death; never thirsty, ever drinking, all in mail never clinking. What am I?", options: ["Fish","Fountain","Icicle","Ship"], correct: 0},
+            {question: "A box without hinges, key, or lid, yet golden treasure inside is hid. What am I?", options: ["Apple","Egg","Coin","Chest"], correct: 1},
+            {question: "I have towns but no houses, forests but no trees, and rivers but no water. What am I?", options: ["Imagination","Map","Dream","Memory"], correct: 1},
+            {question: "Voiceless it cries, wingless flutters, toothless bites, mouthless mutters. What is it?", options: ["Echo","Wind","Fire","Shadow"], correct: 1},
+            {question: "I am not alive, but I grow; I don’t have lungs, but I need air; I don’t have a mouth, but water kills me. What am I?", options: ["Rust","Fire","Ice","Shadow"], correct: 1},
+            {question: "I have cities, but no houses; mountains, but no trees; and water, but no fish. What am I?", options: ["Painting","Map","Atlas","Dream"], correct: 1},
+            {question: "The person who makes it sells it. The person who buys it never uses it. The person who uses it never knows they're using it. What is it?", options: ["Medicine","Coffin","Car","Tool"], correct: 1},
+            {question: "You measure my life in hours and I serve you by expiring. I'm quick when I'm thin and slow when I'm fat. What am I?", options: ["Candle","Clock","Shadow","Battery"], correct: 0},
+            {question: "I speak without a mouth and hear without ears. I have nobody, but I come alive with wind. What am I?", options: ["Echo","Whistle","Flag","Shadow"], correct: 0},
+            {question: "I can bring tears to your eyes; resurrect the dead, make you smile, and reverse time. What am I?", options: ["Memory","Onion","Dream","Love"], correct: 0},
+            {question: "I am always hungry, I must always be fed. The finger I touch will soon turn red. What am I?", options: ["Rust","Fire","Sun","Acid"], correct: 1},
+            {question: "I shave every day, but my beard remains. What am I?", options: ["Barber","Razor","Shampoo","Wind"], correct: 0},
+            {question: "I have keys but no locks, space but no rooms, you can enter but can't go outside. What am I?", options: ["Piano","Keyboard","Map","Code"], correct: 1},
+            {question: "I am a thing people love or hate. I change people's appearances and thoughts. If a person takes care of themself I will go up even higher. Some people might want to hide me. What am I?", options: ["Age","Reputation","Mood","Hair"], correct: 0},
+            {question: "I have seas with no water, coasts with no sand, towns without people and mountains without rock. What am I?", options: ["Imagination","Map","Painting","Story"], correct: 1},
+            {question: "I build up castles; I tear down mountains. I make some men blind; I help others to see. What am I?", options: ["Sand","Time","Wind","Water"], correct: 0},
+            {question: "The more you take, the more you leave behind. What are they?", options: ["Minutes","Footsteps","Memories","Breaths"], correct: 1},
+            {question: "I have a heart that doesn’t beat. What am I?", options: ["Artichoke","Stone","Tree","Clock"], correct: 0},
+            {question: "What occurs once in a minute, twice in a moment, but never in a thousand years?", options: ["The letter M","Time","Chance","Silence"], correct: 0}
+        ];
 
-            const questionDiv = document.createElement('div');
-            questionDiv.className = 'question-entry';
-            questionDiv.id = `logo-question-${questionIndex}`;
-            questionDiv.innerHTML = `
-                <h4>Logo Question ${questionIndex + 1}</h4>
-                <div class="form-group">
-                    <label>Question Text</label>
-                    <input type="text" placeholder="Enter your logo question" class="question-text" onchange="updateLogoQuizData()">
-                </div>
-                <div class="form-group">
-                    <label>Options</label>
-                    <div class="option-input">
-                        <input type="text" placeholder="Option 1" class="option-0">
-                        <label>
-                            <input type="radio" name="correct-logo-${questionIndex}" value="0"> Correct
-                        </label>
-                    </div>
-                    <div class="option-input">
-                        <input type="text" placeholder="Option 2" class="option-1">
-                        <label>
-                            <input type="radio" name="correct-logo-${questionIndex}" value="1"> Correct
-                        </label>
-                    </div>
-                    <div class="option-input">
-                        <input type="text" placeholder="Option 3" class="option-2">
-                        <label>
-                            <input type="radio" name="correct-logo-${questionIndex}" value="2"> Correct
-                        </label>
-                    </div>
-                    <div class="option-input">
-                        <input type="text" placeholder="Option 4" class="option-3">
-                        <label>
-                            <input type="radio" name="correct-logo-${questionIndex}" value="3"> Correct
-                        </label>
-                    </div>
-                </div>
-                <button class="btn btn-danger" onclick="removeLogoQuestion(${questionIndex})">Remove Question</button>
-            `;
+        const riddlesRound2 = [
+            {question: "Alive without breath, as cold as death; never thirsty, ever drinking, all in mail never clinking. What am I? (alternate phrasing)", options: ["Fish","Iron","Ship","Stone"], correct: 0},
+            {question: "I have cities but no houses, forests without trees, and seas without water. I am often rolled and folded. What am I?", options: ["Map","Globe","Memory","Painting"], correct: 0},
+            {question: "Three lives have I. Gentle enough to soothe the skin, light enough to caress the sky, hard enough to crack rocks. What am I?", options: ["Water","Time","Wind","Fire"], correct: 0},
+            {question: "I fly forever, rest never. What am I?", options: ["Time","Wind","Shadow","River"], correct: 0},
+            {question: "I am always in front of you but can’t be seen. What am I?", options: ["Future","Air","Thought","Horizon"], correct: 0},
+            {question: "I have no voice, yet I answer every question. What am I?", options: ["Echo","Book","Silence","Mirror"], correct: 3},
+            {question: "I am not alive, but I grow; I don’t have lungs, but I need air; I don’t have a mouth, but water kills me. What am I?", options: ["Rust","Fire","Ice","Crystal"], correct: 1},
+            {question: "Feed me and I live, give me a drink and I die. What am I?", options: ["Fire","Plant","Shadow","Hunger"], correct: 0},
+            {question: "I am the beginning of the end, and the end of time and space. What am I?", options: ["The letter E","Silence","Void","Light"], correct: 0},
+            {question: "I have lakes but no water, mountains but no stone, and cities but no people. What am I?", options: ["Map","Dream","Poem","Riddle"], correct: 0},
+            {question: "I build up, I break down; I make some blind and others see. Used by children, feared by kings. What am I?", options: ["Sand","Time","Words","Aging"], correct: 0},
+            {question: "I am always hungry and must be fed, yet if you give me water I will soon be dead. What am I?", options: ["Fire","Hunger","Sun","Rust"], correct: 0},
+            {question: "I have a head and a tail but no body. What am I?", options: ["Coin","Comet","Kite","Rope"], correct: 0},
+            {question: "I have keys that open no locks, space but no room, you can enter but no exit. What am I?", options: ["Keyboard","Map","Piano","Cloud"], correct: 0},
+            {question: "What runs but never walks, has a bed but never sleeps?", options: ["River","Wind","Shadow","Clock"], correct: 0},
+            {question: "It cannot be seen, cannot be felt, cannot be heard, cannot be smelt. It lies behind stars and under hills, and empty holes it fills. What is it?", options: ["Darkness","Space","Time","Silence"], correct: 0},
+            {question: "I can fly but have no wings. I can cry but I have no eyes. Whenever I go darkness flies. What am I?", options: ["Cloud","Smoke","Wind","Storm"], correct: 1},
+            {question: "I am lighter than what I am made of and more of me is hidden than is seen. What am I?", options: ["Iceberg","Shadow","Brain","Onion"], correct: 0},
+            {question: "I pass before the sun, yet make no shadow. What am I?", options: ["Wind","Air","Smoke","Sound"], correct: 2},
+            {question: "I can fly around the world while staying in a corner. What am I?", options: ["Stamp","Shadow","Letter","Thought"], correct: 0}
+        ];
 
-            container.appendChild(questionDiv);
+        let riddleState = {
+            currentQuestion: 0,
+            answers: new Array(40).fill(-1),
+            answered: new Array(40).fill(false),
+            submitted: false,
+            questionTimer: 20,
+            timerInterval: null,
+            round: 1,
+            currentQuestionSet: riddlesRound1
+        };
 
-            gameState.logoQuizData.push({
-                id: questionIndex,
-                question: '',
-                options: ['', '', '', ''],
-                correctAnswer: -1
-            });
-
-            updateLogoQuizSetupStatus();
-        }
-
-        function updateLogoQuizData() {
-            document.querySelectorAll('#logoQuestionsContainer .question-entry').forEach((entry, index) => {
-                const questionText = entry.querySelector('.question-text').value;
-                const options = [];
-                let correctAnswer = -1;
-
-                for (let i = 0; i < 4; i++) {
-                    options.push(entry.querySelector(`.option-${i}`).value);
-                    const radio = entry.querySelector(`input[name="correct-logo-${index}"][value="${i}"]`);
-                    if (radio && radio.checked) {
-                        correctAnswer = i;
-                    }
-                }
-
-                if (index < gameState.logoQuizData.length) {
-                    gameState.logoQuizData[index] = {
-                        id: index,
-                        question: questionText,
-                        options: options,
-                        correctAnswer: correctAnswer
-                    };
-                }
-            });
-
-            updateLogoQuizSetupStatus();
-        }
-
-        function removeLogoQuestion(index) {
-            document.getElementById(`logo-question-${index}`).remove();
-            gameState.logoQuizData = gameState.logoQuizData.filter((_, i) => i !== index);
-            updateLogoQuizSetupStatus();
-        }
-
-        function updateLogoQuizSetupStatus() {
-            const validQuestions = gameState.logoQuizData.filter(q => 
-                q.question.trim() && q.options.every(o => o.trim()) && q.correctAnswer >= 0
-            ).length;
-
-            const status = document.getElementById('logoSetupStatus');
-            const startBtn = document.getElementById('startLogoQuizBtn');
-
-            if (validQuestions > 0) {
-                status.textContent = `${validQuestions} valid question(s) ready. Click Start Logo Quiz to begin!`;
-                status.className = 'submission-status success';
-                startBtn.disabled = false;
-            } else {
-                status.textContent = 'Add at least one complete question to start';
-                status.className = 'submission-status waiting';
-                startBtn.disabled = true;
-            }
-        }
-
-        function showLogoSetup() {
-            document.getElementById('logoStartScreen').style.display = 'none';
-            document.getElementById('logoSetup').style.display = 'block';
-        }
-
-        function startLogoQuiz() {
+        function startRiddles() {
             lockTeams();
-            updateLogoQuizData();
-
-            const validQuestions = gameState.logoQuizData.filter(q => 
-                q.question.trim() && q.options.every(o => o.trim()) && q.correctAnswer >= 0
-            );
-
-            if (validQuestions.length === 0) {
-                alert('Please add at least one complete question first!');
-                unlockTeams();
-                return;
-            }
-
-            gameState.logoQuizData = validQuestions;
-            gameState.logoQuizAnswers = new Array(gameState.logoQuizData.length).fill(-1);
-            gameState.logoStarted = true;
-            gameState.logoCompleted = false;
-
-            document.getElementById('logoSetup').style.display = 'none';
+            riddleState.round = riddleState.round || 1;
+            riddleState.currentQuestionSet = riddleState.round === 1 ? riddlesRound1 : riddlesRound2;
+            document.getElementById('logoStartScreen').style.display = 'none';
             document.getElementById('logoDisplay').classList.add('active');
             document.getElementById('logoScoreDisplay').style.display = 'none';
-
-            renderLogoQuizQuestions();
-
+            loadRiddleQuestion(0);
             if (gameState.logoTimerInterval) clearInterval(gameState.logoTimerInterval);
             startLogoTimer();
         }
 
-        function renderLogoQuizQuestions() {
-            const container = document.getElementById('logoQuestionsDisplay');
-            container.innerHTML = '';
+        function loadRiddleQuestion(index) {
+            riddleState.currentQuestion = index;
+            const setIndex = index;
+            const questionObj = riddleState.currentQuestionSet[setIndex];
 
-            gameState.logoQuizData.forEach((q, index) => {
-                const questionCard = document.createElement('div');
-                questionCard.className = 'question-card';
-                questionCard.innerHTML = `
-                    <h3>Question ${index + 1}: ${q.question}</h3>
+            const isTeamA = index % 2 === 0;
+            const teamLabel = isTeamA ? 'Team A' : 'Team B';
+            const teamColor = isTeamA ? '#667eea' : '#f5576c';
+
+            const container = document.getElementById('logoQuestionsDisplay');
+            container.innerHTML = `
+                <div class="question-card">
+                    <div style="margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
+                        <div style="font-size: 0.9em; color: #666;">${riddleState.round === 1 ? 'Round 1' : 'Round 2'} - Riddle ${index + 1} of 20</div>
+                        <div style="background: ${teamColor}; color: white; padding: 5px 12px; border-radius: 4px; font-weight: bold; font-size: 0.9em;">${teamLabel}</div>
+                    </div>
+                            <h3>${questionObj.question}</h3>
+                            <div id="riddleTimer" style="font-weight:bold; margin-bottom: 12px;">20s</div>
                     <div class="options">
-                        ${q.options.map((option, optIndex) => `
-                            <label class="option" onclick="selectLogoQuizAnswer(${index}, ${optIndex})">
-                                <input type="radio" name="logo-question-${index}" value="${optIndex}">
-                                ${option}
-                            </label>
+                        ${questionObj.options.map((opt, i) => `
+                            <button class="option" onclick="selectRiddleAnswer(${i})">${opt}</button>
                         `).join('')}
                     </div>
-                `;
-                container.appendChild(questionCard);
-            });
+                    <div style="margin-top: 18px; display:flex; gap:10px;">
+                        <button class="btn btn-secondary" onclick="prevRiddle()" ${index === 0 ? 'disabled' : ''}>Previous</button>
+                        <button class="btn btn-secondary" onclick="nextRiddle()" ${index === 19 ? 'disabled' : ''}>Next</button>
+                        ${index === 19 ? '<button class="btn btn-success" onclick="submitRiddles()">Submit Round</button>' : ''}
+                    </div>
+                </div>
+            `;
+
+            // restore selection if answered
+            if (riddleState.answered[(riddleState.round - 1) * 20 + index]) {
+                const sel = riddleState.answers[(riddleState.round - 1) * 20 + index];
+                const buttons = container.querySelectorAll('.option');
+                if (buttons[sel]) buttons[sel].classList.add('selected');
+            } else {
+                // start per-riddle timer
+                startRiddleTimer();
+            }
         }
 
-        function selectLogoQuizAnswer(questionIndex, optionIndex) {
-            gameState.logoQuizAnswers[questionIndex] = optionIndex;
-
-            document.querySelectorAll(`input[name="logo-question-${questionIndex}"]`).forEach((input, i) => {
-                const label = input.closest('.option');
-                if (i === optionIndex) {
-                    input.checked = true;
-                    label.classList.add('selected');
-                } else {
-                    label.classList.remove('selected');
+        function startRiddleTimer() {
+            if (riddleState.timerInterval) clearInterval(riddleState.timerInterval);
+            riddleState.questionTimer = 20;
+            updateRiddleTimerDisplay();
+            riddleState.timerInterval = setInterval(() => {
+                riddleState.questionTimer--;
+                updateRiddleTimerDisplay();
+                if (riddleState.questionTimer <= 0) {
+                    clearInterval(riddleState.timerInterval);
+                    // auto move next
+                    if (riddleState.currentQuestion < 19) nextRiddle();
+                    else submitRiddles();
                 }
-            });
+            }, 1000);
         }
 
-        function finishLogoQuiz() {
-            updateLogoQuizData();
-            let score = 0;
-
-            gameState.logoQuizAnswers.forEach((answer, index) => {
-                if (answer === gameState.logoQuizData[index].correctAnswer) {
-                    score++;
-                }
-            });
-
-            gameState.logoCompleted = true;
-            displayLogoQuizScore(score);
+        function updateRiddleTimerDisplay() {
+            const el = document.getElementById('riddleTimer');
+            if (el) el.textContent = riddleState.questionTimer + 's';
         }
 
-        function displayLogoQuizScore(score) {
-            document.getElementById('logoQuestionsDisplay').style.display = 'none';
-            document.getElementById('logoScoreDisplay').style.display = 'block';
-            document.getElementById('logoScoreText').textContent = `Your Score: ${score}/${gameState.logoQuizData.length}`;
-
-            const percentage = Math.round((score / gameState.logoQuizData.length) * 100);
-            const message = percentage >= 80 ? 'Excellent!' : percentage >= 60 ? 'Good Job!' : 'Keep Practicing!';
-            document.getElementById('logoScoreText').textContent += ` - ${message}`;
+        function selectRiddleAnswer(optionIndex) {
+            // mark answer for current round/question
+            const globalIndex = (riddleState.round - 1) * 20 + riddleState.currentQuestion;
+            riddleState.answers[globalIndex] = optionIndex;
+            riddleState.answered[globalIndex] = true;
+            // highlight
+            const buttons = document.querySelectorAll('#logoQuestionsDisplay .option');
+            buttons.forEach((b, i) => b.classList.toggle('selected', i === optionIndex));
+            if (riddleState.timerInterval) clearInterval(riddleState.timerInterval);
         }
 
-        function submitLogoQuiz() {
-            if (!gameState.logoCompleted) {
-                alert('Please complete the quiz first!');
-                return;
+        function nextRiddle() {
+            if (riddleState.currentQuestion < 19) {
+                loadRiddleQuestion(riddleState.currentQuestion + 1);
+            }
+        }
+
+        function prevRiddle() {
+            if (riddleState.currentQuestion > 0) {
+                loadRiddleQuestion(riddleState.currentQuestion - 1);
+            }
+        }
+
+        function submitRiddles() {
+            // compute scores for this round
+            let roundTeamAScore = 0, roundTeamBScore = 0;
+            const base = (riddleState.round - 1) * 20;
+            for (let i = 0; i < 20; i++) {
+                const q = riddleState.currentQuestionSet[i];
+                const ans = riddleState.answers[base + i];
+                const correct = ans === q.correct;
+                if (i % 2 === 0) { if (correct) roundTeamAScore++; } else { if (correct) roundTeamBScore++; }
             }
 
-            alert('🎉 Logo Quiz submitted successfully! Your results have been saved!');
+            if (riddleState.round === 1) {
+                // save and prepare round 2
+                riddleState.round1TeamAScore = roundTeamAScore;
+                riddleState.round1TeamBScore = roundTeamBScore;
+                riddleState.round = 2;
+                riddleState.currentQuestion = 0;
+                document.getElementById('logoDisplay').classList.remove('active');
+                document.getElementById('logoStartScreen').style.display = 'block';
+                document.getElementById('logoStartScreen').innerHTML = `
+                    <div style="text-align: center; padding: 60px 20px;">
+                        <h2 style="font-size: 2.5em; margin-bottom: 20px; color: #333;">Round 1 Complete!</h2>
+                        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 8px; margin: 20px auto; max-width:420px;">
+                            <p style="font-size:1.1em;margin:6px 0;"><strong>Team A: ${roundTeamAScore}/10</strong></p>
+                            <p style="font-size:1.1em;margin:6px 0;"><strong>Team B: ${roundTeamBScore}/10</strong></p>
+                        </div>
+                        <p style="font-size: 1.1em; color: #333; margin-bottom: 20px;"><strong>Ready for Round 2 — tougher riddles!</strong></p>
+                        <button class="btn btn-primary" onclick="startRiddles()" style="font-size: 1.1em; padding: 12px 30px;">Start Round 2</button>
+                    </div>
+                `;
+            } else {
+                // final results
+                riddleState.round2TeamAScore = roundTeamAScore;
+                riddleState.round2TeamBScore = roundTeamBScore;
+                riddleState.submitted = true;
+                document.getElementById('logoDisplay').classList.remove('active');
+                document.getElementById('logoStartScreen').style.display = 'block';
+                const totalA = (riddleState.round1TeamAScore || 0) + riddleState.round2TeamAScore;
+                const totalB = (riddleState.round1TeamBScore || 0) + riddleState.round2TeamBScore;
+                document.getElementById('logoStartScreen').innerHTML = `
+                    <div style="text-align: center; padding: 40px 20px;">
+                        <h2 style="font-size: 2.2em; margin-bottom: 12px; color: #333;">Tough Riddles Complete! 🎉</h2>
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; max-width:720px; margin:20px auto;">
+                            <div style="background:rgba(255,255,255,0.1); padding:20px; border-radius:8px; border:2px solid #667eea; color:white;">
+                                <h3 style="margin-bottom:10px;">Team A</h3>
+                                <div>Round 1: ${riddleState.round1TeamAScore || 0}/10</div>
+                                <div>Round 2: ${riddleState.round2TeamAScore}/10</div>
+                                <div style="margin-top:10px; font-weight:bold;">Total: ${totalA}/20</div>
+                            </div>
+                            <div style="background:rgba(255,255,255,0.1); padding:20px; border-radius:8px; border:2px solid #f5576c; color:white;">
+                                <h3 style="margin-bottom:10px;">Team B</h3>
+                                <div>Round 1: ${riddleState.round1TeamBScore || 0}/10</div>
+                                <div>Round 2: ${riddleState.round2TeamBScore}/10</div>
+                                <div style="margin-top:10px; font-weight:bold;">Total: ${totalB}/20</div>
+                            </div>
+                        </div>
+                        <div style="margin-top:18px;">
+                            <button class="btn btn-primary" onclick="resetRiddlesDisplay()">Play Again</button>
+                        </div>
+                    </div>
+                `;
+                // release teams lock
+                unlockTeams();
+            }
         }
 
-        function resetLogoQuizDisplay() {
+        function resetRiddlesDisplay() {
+            // reset state
+            riddleState = {
+                currentQuestion: 0,
+                answers: new Array(40).fill(-1),
+                answered: new Array(40).fill(false),
+                submitted: false,
+                questionTimer: 30,
+                timerInterval: null,
+                round: 1,
+                currentQuestionSet: riddlesRound1
+            };
             document.getElementById('logoStartScreen').style.display = 'block';
-            document.getElementById('logoSetup').style.display = 'none';
             document.getElementById('logoDisplay').classList.remove('active');
-            document.getElementById('logoQuestionsDisplay').style.display = 'block';
             document.getElementById('logoScoreDisplay').style.display = 'none';
-            gameState.logoStarted = false;
-            gameState.logoCompleted = false;
             unlockTeams();
-
             if (gameState.logoTimerInterval) clearInterval(gameState.logoTimerInterval);
-        }
-
-        function resetLogoQuiz() {
-            if (gameState.logoTimerInterval) clearInterval(gameState.logoTimerInterval);
-            document.getElementById('logoQuestionsContainer').innerHTML = '';
-            gameState.logoQuizData = [];
-            gameState.logoQuizAnswers = [];
-            gameState.logoStarted = false;
-            gameState.logoCompleted = false;
-            unlockTeams();
-            updateLogoQuizSetupStatus();
         }
 
         function startLogoTimer() {
@@ -2635,8 +2622,8 @@
 
                 if (gameState.logoTime <= 0) {
                     clearInterval(gameState.logoTimerInterval);
-                    alert('Time\'s up! Logo Quiz session ended.');
-                    finishLogoQuiz();
+                    alert('Time\'s up! Tough Riddles session ended.');
+                    submitRiddles();
                 }
             }, 1000);
         }
@@ -2645,7 +2632,7 @@
             const minutes = Math.floor(gameState.logoTime / 60);
             const seconds = gameState.logoTime % 60;
             const timerElement = document.getElementById('logoTimer');
-            timerElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            if (timerElement) timerElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
 
             if (gameState.logoTime <= 60) {
                 timerElement.classList.add('danger');
